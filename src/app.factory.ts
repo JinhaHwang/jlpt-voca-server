@@ -17,10 +17,14 @@ export async function createApp(viewsDir?: string) {
     logger: ['error', 'warn', 'log'],
   });
 
-  // Handlebars 설정
-  const viewPath = viewsDir || join(__dirname, '..', 'views');
-  app.setBaseViewsDir(viewPath);
-  app.setViewEngine('hbs');
+  // Handlebars 설정 (옵션)
+  try {
+    const viewPath = viewsDir || join(__dirname, '..', 'views');
+    app.setBaseViewsDir(viewPath);
+    app.setViewEngine('hbs');
+  } catch (error) {
+    console.warn('⚠️ Handlebars view engine not configured:', error.message);
+  }
 
   // API 접두사 설정
   app.setGlobalPrefix('api', {
@@ -60,7 +64,7 @@ function setupSwagger(app: NestExpressApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  
+
   // Swagger UI 옵션 - CDN에서 정적 파일 로드
   SwaggerModule.setup('api/docs', app, document, {
     customCssUrl: [
