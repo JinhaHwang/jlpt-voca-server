@@ -1,5 +1,6 @@
 ### Authentication API Tests
 
+@accessToken = eyJhbGciOiJIUzI1NiIsImtpZCI6IjY1SklwczFoZ3BYN1JDeUMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3pxeWZta2hjd2pxY3ludmFxam5lLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwMjYwNDQ3LCJpYXQiOjE3NjAyNTY4NDcsImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDI1Njg0N31dLCJzZXNzaW9uX2lkIjoiZWEwNDRiZDctYWZiMC00ZDYwLTk0MjUtNmRjNzRiNjljMjkxIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.34NV_9BzcRcr6qfpnmiruF_LKdSd-JHixu-R0gRb0Rk
 
 ###############################################
 # Sign Up (회원가입)
@@ -32,8 +33,8 @@ POST {{baseUrl}}/auth/sign-in
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "password": "password123"
+  "email": "gojinha@naver.com",
+  "password": "Password1!"
 }
 
 ### 로그인 - 다른 사용자
@@ -97,12 +98,25 @@ GET {{baseUrl}}/
 # 브라우저에서 접속: http://localhost:3000/#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired
 
 ###############################################
+# Get Current User (현재 사용자 조회)
+###############################################
+
+### 현재 사용자 정보 조회
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{accessToken}}
+
+### 현재 사용자 정보 조회 - 잘못된 토큰
+GET {{baseUrl}}/auth/me
+Authorization: Bearer invalid-token
+
+### 현재 사용자 정보 조회 - 토큰 없음
+GET {{baseUrl}}/auth/me
+
+###############################################
 # Token Usage Example
 ###############################################
 
 ### 토큰 사용 예시 (프로필 조회)
-# 먼저 로그인하여 access_token을 받고, 아래에 붙여넣으세요
-@accessToken = your_access_token_here
 
 GET {{baseUrl}}/profiles/me
 Authorization: Bearer {{accessToken}}
