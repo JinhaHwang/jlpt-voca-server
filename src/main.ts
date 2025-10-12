@@ -5,19 +5,19 @@ import { createApp, getSwaggerDocument } from './app.factory';
 async function bootstrap() {
   const app = await createApp();
 
-  // 프로덕션 빌드 시 swagger.json 파일 생성
-  if (process.env.NODE_ENV === 'production' || process.env.GENERATE_SWAGGER) {
+  // Swagger 생성 모드 (로컬 개발용)
+  if (process.env.GENERATE_SWAGGER) {
     const document = getSwaggerDocument(app);
     if (document) {
-      writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
-      console.log('✅ Swagger JSON file generated at ./swagger.json');
+      try {
+        writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
+        console.log('✅ Swagger JSON file generated at ./swagger.json');
+      } catch (error) {
+        console.warn('⚠️ Could not write swagger.json (read-only filesystem)');
+      }
     }
-
-    // Swagger 생성 후 종료
-    if (process.env.GENERATE_SWAGGER) {
-      console.log('✅ Swagger generation complete. Exiting...');
-      process.exit(0);
-    }
+    console.log('✅ Swagger generation complete. Exiting...');
+    process.exit(0);
   }
 
   const port = process.env.PORT ?? 3000;
