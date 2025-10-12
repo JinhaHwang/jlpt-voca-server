@@ -18,4 +18,20 @@ export class GetJlptVocaQueryDto {
   @Min(1)
   @Max(200)
   limit?: number;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  word?: string;
+
+  @IsOptional()
+  @IsString()
+  meaning?: string;
+
+  @IsOptional()
+  @IsString()
+  meaning_ko?: string;
 }

@@ -31,6 +31,31 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?level=1&page=2&limit=20
 GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?limit=200
 
 ###############################################
+# JLPT Voca Search APIs
+###############################################
+
+### 통합 검색 (word, meaning, meaning_ko를 OR로 검색)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?search=学校
+
+### 통합 검색 + 레벨 필터
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?search=学校&level=5
+
+### word 필드만 검색
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?word=学校
+
+### meaning 필드만 검색
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?meaning=school
+
+### meaning_ko 필드만 검색
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?meaning_ko=학교
+
+### word 필드만 검색 + 레벨 필터
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?word=学校&level=5
+
+### word 정확히 일치 검색
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/word?search=学校
+
+###############################################
 # JLPT Voca Random APIs
 ###############################################
 

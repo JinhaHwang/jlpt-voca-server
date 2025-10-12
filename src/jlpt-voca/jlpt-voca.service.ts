@@ -1,7 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
 import { GetRandomVocaQueryDto } from './dto/get-random-voca-query.dto';
+import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
 
 export interface JlptVocaRecord {
   [key: string]: unknown;
@@ -23,6 +28,25 @@ export class JlptVocaService {
 
     if (query.level) {
       builder = builder.eq('level', query.level);
+    }
+
+    // 검색 조건 처리
+    if (query.search) {
+      // search 파라미터: word, meaning, meaning_ko를 OR로 검색 (우선순위: word > meaning > meaning_ko)
+      builder = builder.or(
+        `word.ilike.%${query.search}%,meaning.ilike.%${query.search}%,meaning_ko.ilike.%${query.search}%`,
+      );
+      // 우선순위 정렬: word 일치 > meaning 일치 > meaning_ko 일치
+      builder = builder.order('word', { ascending: true });
+    } else if (query.word) {
+      // word 필드만 like 검색
+      builder = builder.ilike('word', `%${query.word}%`);
+    } else if (query.meaning) {
+      // meaning 필드만 like 검색
+      builder = builder.ilike('meaning', `%${query.meaning}%`);
+    } else if (query.meaning_ko) {
+      // meaning_ko 필드만 like 검색
+      builder = builder.ilike('meaning_ko', `%${query.meaning_ko}%`);
     }
 
     const { data, error, count } = await builder.range(from, to);
@@ -84,5 +108,31 @@ export class JlptVocaService {
     }
 
     return result.data as JlptVocaRecord;
+  }
+
+  async findByWordExact(query: GetWordExactQueryDto) {
+    const client = this.supabaseService.getClient();
+
+    if (!query.search) {
+      throw new NotFoundException('Search parameter is required');
+    }
+
+    const { data, error } = await client
+      .from('DD_JLPT_VOCA')
+      .select('*')
+      .eq('word', query.search)
+      .maybeSingle();
+
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+    if (!data) {
+      throw new NotFoundException(
+        `Word '${query.search}' not found in vocabulary`,
+      );
+    }
+
+    return data as JlptVocaRecord;
   }
 }

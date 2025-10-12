@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
 import { GetRandomVocaQueryDto } from './dto/get-random-voca-query.dto';
+import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
 import { JlptVocaService } from './jlpt-voca.service';
 
 @Controller('jlpt-voca')
@@ -15,5 +16,10 @@ export class JlptVocaController {
   @Get('random')
   async random(@Query() query: GetRandomVocaQueryDto) {
     return this.jlptVocaService.findRandom(query);
+  }
+
+  @Get('word')
+  async findByWordExact(@Query() query: GetWordExactQueryDto) {
+    return this.jlptVocaService.findByWordExact(query);
   }
 }
