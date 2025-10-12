@@ -1,0 +1,67 @@
+### JLPT Vocabulary API Tests
+
+# JLPT Voca List APIs
+###############################################
+
+### 전체 단어 목록 조회 (기본)
+GET {{baseUrl}}/jlpt-voca
+
+### 전체 단어 목록 조회 (페이지네이션)
+GET {{baseUrl}}/jlpt-voca?page=1&limit=10
+
+### N1 레벨 단어 목록 조회
+GET {{baseUrl}}/jlpt-voca?level=1
+
+### N2 레벨 단어 목록 조회
+GET {{baseUrl}}/jlpt-voca?level=2
+
+### N3 레벨 단어 목록 조회
+GET {{baseUrl}}/jlpt-voca?level=3
+
+### N4 레벨 단어 목록 조회
+GET {{baseUrl}}/jlpt-voca?level=4
+
+### N5 레벨 단어 목록 조회
+GET {{baseUrl}}/jlpt-voca?level=5
+
+### N1 레벨 단어 목록 조회 (페이지네이션)
+GET {{baseUrl}}/jlpt-voca?level=1&page=2&limit=20
+
+### 최대 limit 200개 테스트
+GET {{baseUrl}}/jlpt-voca?limit=200
+
+###############################################
+# JLPT Voca Random APIs
+###############################################
+
+### 랜덤 단어 조회 (모든 레벨)
+GET {{baseUrl}}/jlpt-voca/random
+
+### N1 레벨 랜덤 단어 조회
+GET {{baseUrl}}/jlpt-voca/random?level=1
+
+### N2 레벨 랜덤 단어 조회
+GET {{baseUrl}}/jlpt-voca/random?level=2
+
+### N3 레벨 랜덤 단어 조회
+GET {{baseUrl}}/jlpt-voca/random?level=3
+
+### N4 레벨 랜덤 단어 조회
+GET {{baseUrl}}/jlpt-voca/random?level=4
+
+### N5 레벨 랜덤 단어 조회
+GET {{baseUrl}}/jlpt-voca/random?level=5
+
+###############################################
+# Error Cases (Validation Test)
+###############################################
+
+### 잘못된 page 값 (0)
+GET {{baseUrl}}/jlpt-voca?page=0
+
+### 잘못된 limit 값 (201 - max 200 초과)
+GET {{baseUrl}}/jlpt-voca?limit=201
+
+### 잘못된 limit 값 (0)
+GET {{baseUrl}}/jlpt-voca?limit=0
+

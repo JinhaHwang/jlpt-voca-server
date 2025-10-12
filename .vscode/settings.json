@@ -21,5 +21,17 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
+  },
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "apiPrefix": "api",
+      "baseUrl": "http://localhost:3000/api"
+    },
+    "dev": {
+      "baseUrl": "http://localhost:3000/api"
+    },
+    "production": {
+      "baseUrl": "https://jlpt-voca-server.vercel.app/api"
+    }
   }
 }

@@ -1,0 +1,8 @@
+### Health Check API Tests
+###############################################
+# Health Check API
+###############################################
+
+### Health Check - 서버 상태 확인
+GET {{baseUrl}}/health
+

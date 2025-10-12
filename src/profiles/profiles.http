@@ -1,0 +1,49 @@
+### Profiles API Tests
+### Variables
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+
+###############################################
+# Profiles APIs (인증 필요)
+###############################################
+
+### 내 프로필 조회
+GET {{baseUrl}}/profiles/me
+Authorization: Bearer {{accessToken}}
+
+### 내 프로필 수정
+PUT {{baseUrl}}/profiles/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "test_user",
+  "fullName": "홍길동",
+  "avatarUrl": "https://example.com/avatar.jpg"
+}
+
+### 내 프로필 수정 (부분 업데이트)
+PUT {{baseUrl}}/profiles/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "new_username"
+}
+
+###############################################
+# Error Cases (Validation Test)
+###############################################
+
+### 인증 없이 프로필 조회 (401 에러 예상)
+GET {{baseUrl}}/profiles/me
+
+### 잘못된 프로필 데이터 (validation 에러 예상)
+PUT {{baseUrl}}/profiles/me
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "이것은_너무_긴_유저네임입니다_80자를_초과하는_유저네임은_허용되지_않습니다_테스트를_위한_아주_긴_문자열입니다_더_길게_만들어봅시다",
+  "avatarUrl": "not-a-valid-url"
+}
+
