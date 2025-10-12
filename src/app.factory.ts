@@ -1,0 +1,76 @@
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { join } from 'path';
+import { AppModule } from './app.module';
+
+// Swagger 문서를 저장하기 위한 WeakMap
+const swaggerDocuments = new WeakMap<NestExpressApplication, any>();
+
+/**
+ * NestJS 애플리케이션 공통 설정을 담당하는 팩토리 함수
+ * @param viewsDir views 디렉토리 경로 (환경에 따라 다를 수 있음)
+ */
+export async function createApp(viewsDir?: string) {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: ['error', 'warn', 'log'],
+  });
+
+  // Handlebars 설정
+  const viewPath = viewsDir || join(__dirname, '..', 'views');
+  app.setBaseViewsDir(viewPath);
+  app.setViewEngine('hbs');
+
+  // API 접두사 설정
+  app.setGlobalPrefix('api', {
+    exclude: ['/'], // 루트 경로는 prefix 제외 (Supabase 이메일 인증 콜백용)
+  });
+
+  // 전역 Validation Pipe 설정
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
+  // Swagger 설정
+  setupSwagger(app);
+
+  return app;
+}
+
+/**
+ * Swagger 문서 설정
+ */
+function setupSwagger(app: NestExpressApplication) {
+  const config = new DocumentBuilder()
+    .setTitle('JLPT Vocabulary API')
+    .setDescription('JLPT 단어 학습을 위한 API 문서')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addServer('https://jlpt-voca-server.vercel.app', 'Production')
+    .addServer('http://localhost:3000', 'Local')
+    .addTag('Auth', '인증 관련 API (회원가입, 로그인, 로그아웃)')
+    .addTag('Profiles', '사용자 프로필 관리 API')
+    .addTag('JLPT Vocabulary', 'JLPT 단어 조회 및 검색 API')
+    .addTag('Health', '서버 상태 확인 API')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
+  // Swagger 문서를 WeakMap에 저장 (나중에 swagger.json 생성을 위해)
+  swaggerDocuments.set(app, document);
+
+  return document;
+}
+
+/**
+ * 앱에서 Swagger 문서 가져오기
+ */
+export function getSwaggerDocument(app: NestExpressApplication) {
+  return swaggerDocuments.get(app);
+}
