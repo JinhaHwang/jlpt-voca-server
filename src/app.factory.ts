@@ -40,29 +40,6 @@ export async function createApp(viewsDir?: string) {
     }),
   );
 
-  // Swagger 정적 파일 리다이렉트 미들웨어 (Vercel 환경용)
-  app.use('/api/docs/swagger-ui-bundle.js', (req, res) => {
-    res.redirect(
-      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js',
-    );
-  });
-  app.use('/api/docs/swagger-ui-standalone-preset.js', (req, res) => {
-    res.redirect(
-      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js',
-    );
-  });
-  app.use('/api/docs/swagger-ui-init.js', (req, res) => {
-    // 빈 JavaScript를 반환하여 404 에러 방지
-    res
-      .type('application/javascript')
-      .send('// Swagger UI initialized via CDN');
-  });
-  app.use('/api/docs/swagger-ui.css', (req, res) => {
-    res.redirect(
-      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css',
-    );
-  });
-
   // Swagger 설정
   setupSwagger(app);
 
@@ -88,7 +65,7 @@ function setupSwagger(app: NestExpressApplication) {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Swagger UI 옵션 - CDN에서 정적 파일 로드 (Vercel serverless 환경 호환)
+  // Swagger UI 옵션 - CDN에서 정적 파일 로드
   SwaggerModule.setup('api/docs', app, document, {
     customCssUrl: [
       'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css',
