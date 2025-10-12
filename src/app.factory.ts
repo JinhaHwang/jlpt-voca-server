@@ -60,7 +60,17 @@ function setupSwagger(app: NestExpressApplication) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  
+  // Swagger UI 옵션 - CDN에서 정적 파일 로드
+  SwaggerModule.setup('api/docs', app, document, {
+    customCssUrl: [
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css',
+    ],
+    customJs: [
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js',
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js',
+    ],
+  });
 
   // Swagger 문서를 WeakMap에 저장 (나중에 swagger.json 생성을 위해)
   swaggerDocuments.set(app, document);
