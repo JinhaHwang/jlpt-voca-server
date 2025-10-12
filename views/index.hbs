@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JLPT API</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .error-icon {
+      color: #ef4444;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+      color: #1f2937;
+    }
+
+    .error-title {
+      color: #ef4444;
+    }
+
+    .message {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .error-details {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .error-code {
+      font-weight: bold;
+      color: #991b1b;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .error-description {
+      color: #7f1d1d;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .button {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 12px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .button:hover {
+      background: #5568d3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .welcome {
+      color: #4b5563;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="welcome-state">
+      <div class="icon">🎌</div>
+      <h1 class="welcome">Hello JLPT</h1>
+      <p class="message">일본어 능력시험 학습 API</p>
+    </div>
+
+    <div id="error-state" class="hidden">
+      <div class="icon error-icon">✕</div>
+      <h1 class="error-title">인증 실패</h1>
+      <p class="message">이메일 인증 중 문제가 발생했습니다.</p>
+
+      <div class="error-details">
+        <div class="error-code">오류 코드: <span id="error-code"></span></div>
+        <div class="error-description" id="error-description"></div>
+      </div>
+
+      <a href="#" class="button" onclick="window.close(); return false;">닫기</a>
+    </div>
+  </div>
+
+  <script>
+    function parseHashParams() {
+      var hash = window.location.hash.substring(1);
+      var params = new URLSearchParams(hash);
+      return {
+        error: params.get('error'),
+        error_code: params.get('error_code'),
+        error_description: params.get('error_description')
+      };
+    }
+
+    function getErrorMessage(errorCode) {
+      var messages = {
+        'otp_expired': '이메일 인증 링크가 만료되었습니다.',
+        'otp_disabled': '이메일 인증이 비활성화되었습니다.',
+        'access_denied': '접근이 거부되었습니다.',
+        'invalid_request': '잘못된 요청입니다.'
+      };
+      return messages[errorCode] || errorCode;
+    }
+
+    function decodeErrorDescription(description) {
+      if (!description) return '';
+      return decodeURIComponent(description.replace(/\+/g, ' '));
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      var params = parseHashParams();
+      
+      if (params.error || params.error_code) {
+        document.getElementById('welcome-state').classList.add('hidden');
+        document.getElementById('error-state').classList.remove('hidden');
+        
+        document.getElementById('error-code').textContent = getErrorMessage(params.error_code || params.error);
+        document.getElementById('error-description').textContent = decodeErrorDescription(params.error_description);
+      }
+    });
+  </script>
+</body>
+</html>

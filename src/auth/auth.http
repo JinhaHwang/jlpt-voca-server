@@ -1,0 +1,109 @@
+### Authentication API Tests
+
+
+###############################################
+# Sign Up (회원가입)
+###############################################
+
+### 회원가입 - 정상 케이스
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "gojinha@naver.com",
+  "password": "Password1!"
+}
+
+### 회원가입 - 다른 이메일
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "securepassword"
+}
+
+###############################################
+# Sign In (로그인)
+###############################################
+
+### 로그인 - 정상 케이스
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 로그인 - 다른 사용자
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "securepassword"
+}
+
+###############################################
+# Error Cases (검증 테스트)
+###############################################
+
+### 회원가입 - 잘못된 이메일 형식
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "password123"
+}
+
+### 회원가입 - 짧은 비밀번호 (6자 미만)
+POST {{baseUrl}}/auth/sign-up
+Content-Type: application/json
+
+{
+  "email": "test3@example.com",
+  "password": "12345"
+}
+
+### 로그인 - 잘못된 비밀번호
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### 로그인 - 존재하지 않는 사용자
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+###############################################
+# Email Verification Callback (이메일 인증 콜백)
+###############################################
+
+### 루트 페이지 접속 (일반 접속 - Hello JLPT 화면)
+# 브라우저에서 접속: http://localhost:3000/
+GET {{baseUrl}}/
+
+### 이메일 인증 만료 에러 시뮬레이션
+# 브라우저에서 접속: http://localhost:3000/#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired
+
+###############################################
+# Token Usage Example
+###############################################
+
+### 토큰 사용 예시 (프로필 조회)
+# 먼저 로그인하여 access_token을 받고, 아래에 붙여넣으세요
+@accessToken = your_access_token_here
+
+GET {{baseUrl}}/profiles/me
+Authorization: Bearer {{accessToken}}
+

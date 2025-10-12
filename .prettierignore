@@ -1,0 +1,10 @@
+# Handlebars 템플릿 파일
+views/**/*.hbs
+
+# Build output
+dist
+node_modules
+
+# Logs
+*.log
+
