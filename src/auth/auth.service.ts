@@ -50,4 +50,18 @@ export class AuthService {
       message: '로그인이 완료되었습니다.',
     };
   }
+
+  async signOut(accessToken: string) {
+    const supabaseClient = this.supabaseService.getClient();
+
+    // 사용자의 액세스 토큰으로 세션 설정
+    await supabaseClient.auth.setSession({
+      access_token: accessToken,
+      refresh_token: '', // refresh token은 필요 없음
+    });
+
+    // 해당 세션 로그아웃
+    const { error } = await supabaseClient.auth.signOut();
+    return { error };
+  }
 }

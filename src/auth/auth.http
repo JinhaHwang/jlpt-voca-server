@@ -1,6 +1,6 @@
 ### Authentication API Tests
 
-@accessToken = eyJhbGciOiJIUzI1NiIsImtpZCI6IjY1SklwczFoZ3BYN1JDeUMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3pxeWZta2hjd2pxY3ludmFxam5lLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwMjYwNDQ3LCJpYXQiOjE3NjAyNTY4NDcsImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDI1Njg0N31dLCJzZXNzaW9uX2lkIjoiZWEwNDRiZDctYWZiMC00ZDYwLTk0MjUtNmRjNzRiNjljMjkxIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.34NV_9BzcRcr6qfpnmiruF_LKdSd-JHixu-R0gRb0Rk
+@accessToken = eyJhbGciOiJIUzI1NiIsImtpZCI6IjY1SklwczFoZ3BYN1JDeUMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3pxeWZta2hjd2pxY3ludmFxam5lLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwMjYyMjAyLCJpYXQiOjE3NjAyNTg2MDIsImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDI1ODYwMn1dLCJzZXNzaW9uX2lkIjoiYzhlZWNiZDctOWNlYy00YzM4LWJjNzYtYmM5MTY4OWZhNzU2IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.nVSWStnWu1hzQ0ozde2Jl_rG91q7TCq_LU8VhAaaGP4
 
 ###############################################
 # Sign Up (회원가입)
@@ -13,15 +13,6 @@ Content-Type: application/json
 {
   "email": "gojinha@naver.com",
   "password": "Password1!"
-}
-
-### 회원가입 - 다른 이메일
-POST {{baseUrl}}/auth/sign-up
-Content-Type: application/json
-
-{
-  "email": "user2@example.com",
-  "password": "securepassword"
 }
 
 ###############################################
@@ -37,14 +28,6 @@ Content-Type: application/json
   "password": "Password1!"
 }
 
-### 로그인 - 다른 사용자
-POST {{baseUrl}}/auth/sign-in
-Content-Type: application/json
-
-{
-  "email": "user2@example.com",
-  "password": "securepassword"
-}
 
 ###############################################
 # Error Cases (검증 테스트)
@@ -113,11 +96,16 @@ Authorization: Bearer invalid-token
 GET {{baseUrl}}/auth/me
 
 ###############################################
-# Token Usage Example
+# Logout (로그아웃)
 ###############################################
 
-### 토큰 사용 예시 (프로필 조회)
-
-GET {{baseUrl}}/profiles/me
+### 로그아웃 - 정상 케이스
+POST {{baseUrl}}/auth/logout
 Authorization: Bearer {{accessToken}}
 
+### 로그아웃 - 토큰 없음 (401 에러 예상)
+POST {{baseUrl}}/auth/logout
+
+### 로그아웃 - 잘못된 토큰 (401 에러 예상)
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer invalid-token

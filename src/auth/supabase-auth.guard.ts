@@ -14,7 +14,7 @@ export class SupabaseAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context
       .switchToHttp()
-      .getRequest<Request & { user?: unknown }>();
+      .getRequest<Request & { user?: unknown; accessToken?: string }>();
     const accessToken = this.extractAccessToken(request);
 
     const supabaseClient = this.supabaseService.getClient();
@@ -25,6 +25,7 @@ export class SupabaseAuthGuard implements CanActivate {
     }
 
     request.user = data.user;
+    request.accessToken = accessToken;
     return true;
   }
 
