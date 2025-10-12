@@ -3,9 +3,8 @@
   "paths": {
     "/api/auth/sign-up": {
       "post": {
-        "operationId": "AuthController_signUp",
-        "summary": "회원가입",
         "description": "이메일과 비밀번호로 회원가입",
+        "operationId": "AuthController_signUp",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -22,6 +21,7 @@
             "description": ""
           }
         },
+        "summary": "회원가입",
         "tags": [
           "Auth"
         ]
@@ -29,9 +29,8 @@
     },
     "/api/auth/sign-in": {
       "post": {
-        "operationId": "AuthController_signIn",
-        "summary": "로그인",
         "description": "이메일과 비밀번호로 로그인",
+        "operationId": "AuthController_signIn",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -48,6 +47,7 @@
             "description": ""
           }
         },
+        "summary": "로그인",
         "tags": [
           "Auth"
         ]
@@ -55,70 +55,69 @@
     },
     "/api/auth/me": {
       "get": {
-        "operationId": "AuthController_getMe",
-        "summary": "현재 사용자 정보 조회",
         "description": "인증된 사용자의 정보를 조회",
+        "operationId": "AuthController_getMe",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ],
         "security": [
           {
             "bearer": []
           }
+        ],
+        "summary": "현재 사용자 정보 조회",
+        "tags": [
+          "Auth"
         ]
       }
     },
     "/api/auth/logout": {
       "post": {
-        "operationId": "AuthController_logout",
-        "summary": "로그아웃",
         "description": "현재 세션 로그아웃",
+        "operationId": "AuthController_logout",
         "parameters": [],
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "tags": [
-          "Auth"
-        ],
         "security": [
           {
             "bearer": []
           }
+        ],
+        "summary": "로그아웃",
+        "tags": [
+          "Auth"
         ]
       }
     },
     "/api/profiles/me": {
       "get": {
-        "operationId": "ProfilesController_getMyProfile",
-        "summary": "내 프로필 조회",
         "description": "현재 사용자의 프로필 정보 조회",
+        "operationId": "ProfilesController_getMyProfile",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "tags": [
-          "Profiles"
-        ],
         "security": [
           {
             "bearer": []
           }
+        ],
+        "summary": "내 프로필 조회",
+        "tags": [
+          "Profiles"
         ]
       },
       "put": {
-        "operationId": "ProfilesController_updateMyProfile",
-        "summary": "내 프로필 수정",
         "description": "현재 사용자의 프로필 정보 수정",
+        "operationId": "ProfilesController_updateMyProfile",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -135,27 +134,28 @@
             "description": ""
           }
         },
-        "tags": [
-          "Profiles"
-        ],
         "security": [
           {
             "bearer": []
           }
+        ],
+        "summary": "내 프로필 수정",
+        "tags": [
+          "Profiles"
         ]
       }
     },
     "/api/health": {
       "get": {
-        "operationId": "HealthController_check",
-        "summary": "헬스 체크",
         "description": "서버 상태 확인",
+        "operationId": "HealthController_check",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
+        "summary": "헬스 체크",
         "tags": [
           "Health"
         ]
@@ -163,9 +163,8 @@
     },
     "/api/jlpt-voca": {
       "get": {
-        "operationId": "JlptVocaController_list",
-        "summary": "JLPT 단어 목록 조회",
         "description": "레벨별 단어 목록 조회 및 검색 (search, word, meaning, meaning_ko)",
+        "operationId": "JlptVocaController_list",
         "parameters": [
           {
             "name": "level",
@@ -232,6 +231,7 @@
             "description": ""
           }
         },
+        "summary": "JLPT 단어 목록 조회",
         "tags": [
           "JLPT Vocabulary"
         ]
@@ -239,9 +239,8 @@
     },
     "/api/jlpt-voca/random": {
       "get": {
-        "operationId": "JlptVocaController_random",
-        "summary": "랜덤 단어 조회",
         "description": "레벨별 또는 전체에서 랜덤으로 단어 1개 조회",
+        "operationId": "JlptVocaController_random",
         "parameters": [
           {
             "name": "level",
@@ -264,6 +263,7 @@
             }
           }
         },
+        "summary": "랜덤 단어 조회",
         "tags": [
           "JLPT Vocabulary"
         ]
@@ -271,9 +271,8 @@
     },
     "/api/jlpt-voca/word": {
       "get": {
-        "operationId": "JlptVocaController_findByWordExact",
-        "summary": "단어 정확히 일치 검색",
         "description": "word 필드가 정확히 일치하는 단어 조회",
+        "operationId": "JlptVocaController_findByWordExact",
         "parameters": [
           {
             "name": "search",
@@ -296,6 +295,7 @@
             }
           }
         },
+        "summary": "단어 정확히 일치 검색",
         "tags": [
           "JLPT Vocabulary"
         ]
@@ -328,12 +328,12 @@
   ],
   "servers": [
     {
-      "url": "http://localhost:3000",
-      "description": "Local"
-    },
-    {
       "url": "https://jlpt-voca-server.vercel.app",
       "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local"
     }
   ],
   "components": {
@@ -349,7 +349,8 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "password": {
             "type": "string",
@@ -365,7 +366,8 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "format": "email"
           },
           "password": {
             "type": "string"
@@ -388,7 +390,8 @@
             "maxLength": 120
           },
           "avatarUrl": {
-            "type": "string"
+            "type": "string",
+            "format": "uri"
           }
         }
       }
