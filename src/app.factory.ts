@@ -52,7 +52,10 @@ export async function createApp(viewsDir?: string) {
     );
   });
   app.use('/api/docs/swagger-ui-init.js', (req, res) => {
-    res.status(404).send('Not needed with CDN');
+    // 빈 JavaScript를 반환하여 404 에러 방지
+    res
+      .type('application/javascript')
+      .send('// Swagger UI initialized via CDN');
   });
   app.use('/api/docs/swagger-ui.css', (req, res) => {
     res.redirect(
