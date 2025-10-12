@@ -4,5 +4,5 @@
 ###############################################
 
 ### Health Check - 서버 상태 확인
-GET {{baseUrl}}/health
+GET {{baseUrl}}/{{apiPrefix}}/health
 

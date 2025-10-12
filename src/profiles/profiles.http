@@ -7,11 +7,11 @@
 ###############################################
 
 ### 내 프로필 조회
-GET {{baseUrl}}/profiles/me
+GET {{baseUrl}}/{{apiPrefix}}/profiles/me
 Authorization: Bearer {{accessToken}}
 
 ### 내 프로필 수정
-PUT {{baseUrl}}/profiles/me
+PUT {{baseUrl}}/{{apiPrefix}}/profiles/me
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
@@ -22,7 +22,7 @@ Content-Type: application/json
 }
 
 ### 내 프로필 수정 (부분 업데이트)
-PUT {{baseUrl}}/profiles/me
+PUT {{baseUrl}}/{{apiPrefix}}/profiles/me
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
@@ -35,10 +35,10 @@ Content-Type: application/json
 ###############################################
 
 ### 인증 없이 프로필 조회 (401 에러 예상)
-GET {{baseUrl}}/profiles/me
+GET {{baseUrl}}/{{apiPrefix}}/profiles/me
 
 ### 잘못된 프로필 데이터 (validation 에러 예상)
-PUT {{baseUrl}}/profiles/me
+PUT {{baseUrl}}/{{apiPrefix}}/profiles/me
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 

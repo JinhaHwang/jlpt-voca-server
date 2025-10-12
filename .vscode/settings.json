@@ -15,14 +15,16 @@
   },
   "rest-client.environmentVariables": {
     "$shared": {
-      "apiPrefix": "api",
-      "baseUrl": "http://localhost:3000/api"
+      "baseUrl": "http://localhost:3000",
+      "apiPrefix": "api"
     },
     "dev": {
-      "baseUrl": "http://localhost:3000/api"
+      "baseUrl": "http://localhost:3000",
+      "apiPrefix": "api"
     },
     "production": {
-      "baseUrl": "https://jlpt-voca-server.vercel.app/api"
+      "baseUrl": "https://jlpt-voca-server.vercel.app",
+      "apiPrefix": "api"
     }
   }
 }

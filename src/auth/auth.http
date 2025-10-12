@@ -1,13 +1,13 @@
 ### Authentication API Tests
 
-@accessToken = eyJhbGciOiJIUzI1NiIsImtpZCI6IjY1SklwczFoZ3BYN1JDeUMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3pxeWZta2hjd2pxY3ludmFxam5lLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwMjYyMjAyLCJpYXQiOjE3NjAyNTg2MDIsImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDI1ODYwMn1dLCJzZXNzaW9uX2lkIjoiYzhlZWNiZDctOWNlYy00YzM4LWJjNzYtYmM5MTY4OWZhNzU2IiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.nVSWStnWu1hzQ0ozde2Jl_rG91q7TCq_LU8VhAaaGP4
+@accessToken = eyJhbGciOiJIUzI1NiIsImtpZCI6IjY1SklwczFoZ3BYN1JDeUMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3pxeWZta2hjd2pxY3ludmFxam5lLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzYwMjYyNjM2LCJpYXQiOjE3NjAyNTkwMzYsImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsIjoiZ29qaW5oYUBuYXZlci5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJzdWIiOiIyZTIzNWFlYi01ZjI2LTQ4NDQtOGU3ZC04ZTcwOWVhNTMwMDQifSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQiLCJhYWwiOiJhYWwxIiwiYW1yIjpbeyJtZXRob2QiOiJwYXNzd29yZCIsInRpbWVzdGFtcCI6MTc2MDI1OTAzNn1dLCJzZXNzaW9uX2lkIjoiOTYyMzhhMTUtMmY0Mi00MTYxLWE2NjQtMmJlM2I4ZmNlMGNkIiwiaXNfYW5vbnltb3VzIjpmYWxzZX0.W5tQIEEMv99LaymunLrO80BeA1O8wQL3eVFjsTsHjQo
 
 ###############################################
 # Sign Up (회원가입)
 ###############################################
 
 ### 회원가입 - 정상 케이스
-POST {{baseUrl}}/auth/sign-up
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-up
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 ###############################################
 
 ### 로그인 - 정상 케이스
-POST {{baseUrl}}/auth/sign-in
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-in
 Content-Type: application/json
 
 {
@@ -34,7 +34,7 @@ Content-Type: application/json
 ###############################################
 
 ### 회원가입 - 잘못된 이메일 형식
-POST {{baseUrl}}/auth/sign-up
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-up
 Content-Type: application/json
 
 {
@@ -43,7 +43,7 @@ Content-Type: application/json
 }
 
 ### 회원가입 - 짧은 비밀번호 (6자 미만)
-POST {{baseUrl}}/auth/sign-up
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-up
 Content-Type: application/json
 
 {
@@ -52,7 +52,7 @@ Content-Type: application/json
 }
 
 ### 로그인 - 잘못된 비밀번호
-POST {{baseUrl}}/auth/sign-in
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-in
 Content-Type: application/json
 
 {
@@ -61,7 +61,7 @@ Content-Type: application/json
 }
 
 ### 로그인 - 존재하지 않는 사용자
-POST {{baseUrl}}/auth/sign-in
+POST {{baseUrl}}/{{apiPrefix}}/auth/sign-in
 Content-Type: application/json
 
 {
@@ -85,27 +85,27 @@ GET {{baseUrl}}/
 ###############################################
 
 ### 현재 사용자 정보 조회
-GET {{baseUrl}}/auth/me
+GET {{baseUrl}}/{{apiPrefix}}/auth/me
 Authorization: Bearer {{accessToken}}
 
 ### 현재 사용자 정보 조회 - 잘못된 토큰
-GET {{baseUrl}}/auth/me
+GET {{baseUrl}}/{{apiPrefix}}/auth/me
 Authorization: Bearer invalid-token
 
 ### 현재 사용자 정보 조회 - 토큰 없음
-GET {{baseUrl}}/auth/me
+GET {{baseUrl}}/{{apiPrefix}}/auth/me
 
 ###############################################
 # Logout (로그아웃)
 ###############################################
 
 ### 로그아웃 - 정상 케이스
-POST {{baseUrl}}/auth/logout
+POST {{baseUrl}}/{{apiPrefix}}/auth/logout
 Authorization: Bearer {{accessToken}}
 
 ### 로그아웃 - 토큰 없음 (401 에러 예상)
-POST {{baseUrl}}/auth/logout
+POST {{baseUrl}}/{{apiPrefix}}/auth/logout
 
 ### 로그아웃 - 잘못된 토큰 (401 에러 예상)
-POST {{baseUrl}}/auth/logout
+POST {{baseUrl}}/{{apiPrefix}}/auth/logout
 Authorization: Bearer invalid-token
