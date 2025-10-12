@@ -1,3 +1,4 @@
+import { NestFactory } from '@nestjs/core';
 import { writeFileSync } from 'fs';
 import { createApp, getSwaggerDocument } from './app.factory';
 
