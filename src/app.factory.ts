@@ -40,6 +40,26 @@ export async function createApp(viewsDir?: string) {
     }),
   );
 
+  // Swagger 정적 파일 리다이렉트 미들웨어 (Vercel 환경용)
+  app.use('/api/docs/swagger-ui-bundle.js', (req, res) => {
+    res.redirect(
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js',
+    );
+  });
+  app.use('/api/docs/swagger-ui-standalone-preset.js', (req, res) => {
+    res.redirect(
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js',
+    );
+  });
+  app.use('/api/docs/swagger-ui-init.js', (req, res) => {
+    res.status(404).send('Not needed with CDN');
+  });
+  app.use('/api/docs/swagger-ui.css', (req, res) => {
+    res.redirect(
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css',
+    );
+  });
+
   // Swagger 설정
   setupSwagger(app);
 
@@ -65,15 +85,20 @@ function setupSwagger(app: NestExpressApplication) {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  // Swagger UI 옵션 - CDN에서 정적 파일 로드
+  // Swagger UI 옵션 - CDN에서 정적 파일 로드 (Vercel serverless 환경 호환)
   SwaggerModule.setup('api/docs', app, document, {
-    customCssUrl: [
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+    customSiteTitle: 'JLPT Vocabulary API',
+    customCss: '.swagger-ui .topbar { display: none }',
+    customCssUrl:
       'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css',
-    ],
     customJs: [
       'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js',
       'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js',
     ],
+    customfavIcon: 'https://nestjs.com/img/logo_text.svg',
   });
 
   // Swagger 문서를 WeakMap에 저장 (나중에 swagger.json 생성을 위해)
