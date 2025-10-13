@@ -23,7 +23,8 @@ export class JlptVocaController {
   @Get('random')
   @ApiOperation({
     summary: '랜덤 단어 조회',
-    description: '레벨별 또는 전체에서 랜덤으로 단어 1개 조회',
+    description:
+      'ids가 있으면 해당 단어들을 랜덤으로 섞어서 반환, 없으면 레벨별 또는 전체에서 랜덤으로 단어 1개 조회',
   })
   async random(@Query() query: GetRandomVocaQueryDto) {
     return this.jlptVocaService.findRandom(query);

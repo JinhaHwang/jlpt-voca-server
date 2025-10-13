@@ -77,6 +77,16 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=4
 ### N5 레벨 랜덤 단어 조회
 GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=5
 
+### 특정 ID 배열로 단어 조회 (랜덤 섞기)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=1&ids=2&ids=3&ids=4&ids=5
+
+
+### 특정 ID 배열로 단어 조회 (단일 ID)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=1
+
+### 특정 ID 배열로 단어 조회 (2개)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=100&ids=200
+
 ###############################################
 # Error Cases (Validation Test)
 ###############################################

@@ -69,6 +69,28 @@ export class JlptVocaService {
   async findRandom(query: GetRandomVocaQueryDto) {
     const client = this.supabaseService.getClient();
 
+    // ids가 있는 경우: 해당 ids의 voca들을 가져와서 랜덤으로 섞어서 반환
+    if (query.ids && query.ids.length > 0) {
+      const { data, error } = await client
+        .from('DD_JLPT_VOCA')
+        .select('*')
+        .in('id', query.ids);
+
+      if (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      // 배열을 랜덤으로 섞기 (Fisher-Yates shuffle)
+      const shuffled = [...(data ?? [])];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled as JlptVocaRecord[];
+    }
+
+    // ids가 없는 경우: 기존 로직 (랜덤 1개 반환)
     // 먼저 전체 개수를 가져옵니다
     let countBuilder = client
       .from('DD_JLPT_VOCA')
