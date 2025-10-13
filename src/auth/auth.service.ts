@@ -3,28 +3,20 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { SupabaseService } from '../supabase/supabase.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly supabaseService: SupabaseService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly supabaseService: SupabaseService) {}
 
   async signUp(signUpDto: SignUpDto) {
     const supabaseClient = this.supabaseService.getClient();
-    const deployHost = this.configService.get<string>('DEPLOY_HOST');
 
     const { data, error } = await supabaseClient.auth.signUp({
       email: signUpDto.email,
       password: signUpDto.password,
-      options: {
-        emailRedirectTo: deployHost,
-      },
     });
 
     if (error) {
