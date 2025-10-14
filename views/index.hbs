@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JLPT Vocabulary API</title>
   <style>
+    :root {
+      --onsen-primary: #0ba9d9;
+      --onsen-primary-dark: #0888af;
+      --onsen-accent: #ff5e62;
+      --onsen-accent-dark: #ff3a40;
+      --onsen-surface: rgba(255, 255, 255, 0.2);
+      --onsen-surface-strong: rgba(255, 255, 255, 0.3);
+      --onsen-muted-shadow: rgba(8, 22, 42, 0.28);
+      --onsen-text-dark: #1f2a3d;
+      --onsen-text-muted: rgba(255, 255, 255, 0.76);
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       display: flex;
@@ -12,7 +24,7 @@
       align-items: center;
       height: 100vh;
       margin: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--onsen-primary) 0%, var(--onsen-accent) 100%);
       color: white;
       position: relative;
       overflow: hidden;
@@ -35,19 +47,19 @@
       width: 44px;
       height: 44px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.22);
       color: #ffffff;
       padding: 0;
       text-decoration: none;
       backdrop-filter: blur(6px);
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.28);
+      box-shadow: 0 12px 32px var(--onsen-muted-shadow);
       transition: transform 0.2s, box-shadow 0.2s;
       z-index: 2;
     }
 
     .swagger-link:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.32);
+      box-shadow: 0 16px 36px rgba(255, 94, 98, 0.35);
     }
 
     .swagger-link img {
@@ -67,9 +79,9 @@
       min-width: 140px;
       padding: 14px 18px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.12);
+      background: var(--onsen-surface);
       backdrop-filter: blur(6px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 12px 35px rgba(10, 25, 46, 0.2);
       color: #ffffff;
       animation-name: float-word;
       animation-timing-function: linear;
@@ -105,8 +117,8 @@
       border-radius: 999px;
       font-size: 0.75rem;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.25);
-      color: #10172a;
+      background: rgba(255, 94, 98, 0.82);
+      color: #ffffff;
     }
 
     .floating-card__word {
@@ -149,7 +161,7 @@
       display: inline-block;
       padding: 0.8rem 2rem;
       background: white;
-      color: #667eea;
+      color: var(--onsen-accent);
       text-decoration: none;
       border-radius: 8px;
       font-weight: 600;
@@ -167,7 +179,7 @@
       gap: 12px;
       padding: 0.75rem 1rem;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(4px);
     }
 
@@ -178,10 +190,10 @@
       padding: 0.5rem 0.9rem;
       font-size: 0.95rem;
       font-weight: 600;
-      color: #333;
+      color: var(--onsen-text-dark);
       cursor: pointer;
       background: #ffffff;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
     }
 
     .controls button {
@@ -190,15 +202,15 @@
       padding: 0.55rem 1.2rem;
       font-size: 0.95rem;
       font-weight: 700;
-      background: #fbbf24;
-      color: #1f2937;
+      background: var(--onsen-accent);
+      color: #ffffff;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .controls button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(251, 191, 36, 0.35);
+      box-shadow: 0 6px 18px rgba(255, 94, 98, 0.45);
     }
 
     .controls button:disabled {
@@ -208,13 +220,71 @@
       box-shadow: none;
     }
 
-    .toggle-meaning-btn {
-      background: rgba(96, 165, 250, 0.32);
-      color: #f8fafc;
+    .toggle-meaning {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.55rem 0.9rem 0.55rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(11, 169, 217, 0.22);
+      color: var(--onsen-text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      user-select: none;
     }
 
-    .toggle-meaning-btn:hover {
-      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
+    .toggle-meaning:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 94, 98, 0.35);
+    }
+
+    .toggle-meaning__input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toggle-meaning__track {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(11, 169, 217, 0.38);
+      transition: background 0.2s ease;
+    }
+
+    .toggle-meaning__input:checked + .toggle-meaning__track {
+      background: var(--onsen-accent);
+    }
+
+    .toggle-meaning__thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: #f8fafc;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-meaning__input:checked + .toggle-meaning__track .toggle-meaning__thumb {
+      transform: translateX(20px);
+    }
+
+    .toggle-meaning__input:focus-visible + .toggle-meaning__track {
+      outline: 2px solid rgba(255, 94, 98, 0.85);
+      outline-offset: 3px;
+    }
+
+    .toggle-meaning__text {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
 
     .hidden {
@@ -229,34 +299,34 @@
     .error-container {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 10px 30px rgba(8, 22, 42, 0.16);
       padding: 24px;
       max-width: 420px;
-      color: #1f2937;
+      color: var(--onsen-text-dark);
     }
 
     .error-icon {
       font-size: 32px;
       margin-bottom: 12px;
-      color: #ef4444;
+      color: var(--onsen-accent);
     }
 
     .error-title {
       font-size: 18px;
       margin-bottom: 8px;
-      color: #ef4444;
+      color: var(--onsen-accent);
       font-weight: 700;
     }
 
     .error-message {
       font-size: 14px;
-      color: #6b7280;
+      color: rgba(31, 42, 61, 0.72);
       margin-bottom: 16px;
     }
 
     .error-details {
-      background: #fee2e2;
-      border: 1px solid #fecaca;
+      background: rgba(255, 94, 98, 0.12);
+      border: 1px solid rgba(255, 94, 98, 0.32);
       border-radius: 6px;
       padding: 12px;
       margin-bottom: 16px;
@@ -265,19 +335,19 @@
 
     .error-code {
       font-weight: 600;
-      color: #991b1b;
+      color: var(--onsen-accent-dark);
       margin-bottom: 6px;
       font-size: 13px;
     }
 
     .error-description {
-      color: #7f1d1d;
+      color: rgba(255, 94, 98, 0.9);
       font-size: 13px;
     }
 
     .error-button {
       display: inline-block;
-      background: #667eea;
+      background: var(--onsen-primary);
       color: white;
       padding: 10px 20px;
       border-radius: 8px;
@@ -288,7 +358,7 @@
     }
 
     .error-button:hover {
-      background: #5568d3;
+      background: var(--onsen-primary-dark);
       transform: none;
     }
   </style>
@@ -323,14 +393,19 @@
         <option value="5" selected>N5</option>
       </select>
       <button type="button" id="add-word-btn">추가</button>
-      <button
-        type="button"
-        id="toggle-meaning-btn"
-        class="toggle-meaning-btn"
-        aria-pressed="false"
-      >
-        뜻 숨기기
-      </button>
+      <label class="toggle-meaning">
+        <input
+          type="checkbox"
+          id="toggle-meaning-switch"
+          class="toggle-meaning__input"
+          checked
+          aria-label="뜻 보기 숨기기 전환"
+        />
+        <span class="toggle-meaning__track" aria-hidden="true">
+          <span class="toggle-meaning__thumb"></span>
+        </span>
+        <span class="toggle-meaning__text" id="toggle-meaning-text">뜻 숨기기</span>
+      </label>
     </div>
   </div>
 
@@ -411,8 +486,9 @@
 
       var addButton = document.getElementById('add-word-btn');
       var levelSelect = document.getElementById('level-select');
-      var toggleMeaningButton = document.getElementById('toggle-meaning-btn');
-      var meaningVisible = true;
+      var toggleMeaningSwitch = document.getElementById('toggle-meaning-switch');
+      var toggleMeaningText = document.getElementById('toggle-meaning-text');
+      var meaningVisible = toggleMeaningSwitch ? toggleMeaningSwitch.checked : true;
 
       if (addButton && levelSelect) {
         addButton.addEventListener('click', function() {
@@ -433,15 +509,17 @@
 
       function updateMeaningVisibility() {
         document.body.classList.toggle('meaning-hidden', !meaningVisible);
-        if (toggleMeaningButton) {
-          toggleMeaningButton.textContent = meaningVisible ? '뜻 숨기기' : '뜻 보기';
-          toggleMeaningButton.setAttribute('aria-pressed', String(!meaningVisible));
+        if (toggleMeaningSwitch) {
+          toggleMeaningSwitch.checked = meaningVisible;
+        }
+        if (toggleMeaningText) {
+          toggleMeaningText.textContent = meaningVisible ? '뜻 숨기기' : '뜻 보기';
         }
       }
 
-      if (toggleMeaningButton) {
-        toggleMeaningButton.addEventListener('click', function() {
-          meaningVisible = !meaningVisible;
+      if (toggleMeaningSwitch) {
+        toggleMeaningSwitch.addEventListener('change', function(event) {
+          meaningVisible = Boolean(event.target.checked);
           updateMeaningVisibility();
         });
         updateMeaningVisibility();

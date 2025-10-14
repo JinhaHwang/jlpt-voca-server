@@ -17,6 +17,7 @@
 - Target ES2022 with TypeScript; prefer async/await and explicit return types on public APIs.
 - Follow NestJS naming (`*.module.ts`, `*.controller.ts`, `*.service.ts`) and keep reusable utilities in `src/common/`.
 - Format with Prettier (`npm run format`); two-space indentation and semicolons are enforced. Avoid manual stylistic overrides.
+- When adding or updating UI under `views/`, reference Onsen UI’s visual concept—favor its teal/blue primaries with warm coral accents to keep colors and gradients consistent across components.
 
 ## Testing Guidelines
 - Place unit specs alongside implementations using the `*.spec.ts` suffix.
