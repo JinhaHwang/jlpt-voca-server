@@ -11,7 +11,7 @@ import { JlptVocaService } from './jlpt-voca.service';
 export class JlptVocaController {
   constructor(private readonly jlptVocaService: JlptVocaService) {}
 
-  @Get()
+  @Get('search')
   @ApiOperation({
     summary: 'JLPT 단어 목록 조회',
     description:
@@ -39,7 +39,7 @@ export class JlptVocaController {
     return this.jlptVocaService.findRandomByIds(query);
   }
 
-  @Get('word')
+  @Get('find')
   @ApiOperation({
     summary: '단어 정확히 일치 검색',
     description: 'word 필드가 정확히 일치하는 단어 조회',

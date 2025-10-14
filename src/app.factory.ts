@@ -75,8 +75,6 @@ function setupSwagger(app: NestExpressApplication) {
     .setDescription('JLPT 단어 학습을 위한 API 문서')
     .setVersion('1.0')
     .addBearerAuth()
-    .addServer('https://jlpt-voca-server.vercel.app', 'Production')
-    .addServer('http://localhost:3000', 'Local')
     .addTag('Auth', '인증 관련 API (회원가입, 로그인, 로그아웃)')
     .addTag('Profiles', '사용자 프로필 관리 API')
     .addTag('JLPT Vocabulary', 'JLPT 단어 조회 및 검색 API')
