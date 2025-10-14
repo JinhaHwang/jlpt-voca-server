@@ -14,11 +14,53 @@
       margin: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .floating-words {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating-word {
+      position: absolute;
+      bottom: -10vh;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+      text-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      animation-name: float-word;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes float-word {
+      0% {
+        transform: translate(-50%, 5vh) scale(0.9);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.85;
+      }
+      85% {
+        opacity: 0.85;
+      }
+      100% {
+        transform: translate(-50%, -120vh) scale(1.1);
+        opacity: 0;
+      }
     }
 
     .container {
       text-align: center;
       padding: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
     h1 {
@@ -119,6 +161,8 @@
   </style>
 </head>
 <body>
+  <div class="floating-words" id="floating-words" aria-hidden="true"></div>
+
   <div id="welcome-state" class="container">
     <h1>🇯🇵 JLPT Vocabulary API</h1>
     <p>JLPT 단어 학습을 위한 API 서버입니다</p>
@@ -191,11 +235,62 @@
       if (params.error || params.error_code) {
         document.getElementById('welcome-state').classList.add('hidden');
         document.getElementById('error-state').classList.remove('hidden');
+        document.getElementById('floating-words')?.classList.add('hidden');
         
         document.getElementById('error-code').textContent = getErrorMessage(params.error_code || params.error);
         document.getElementById('error-description').textContent = decodeErrorDescription(params.error_description);
+        return;
       }
+
+      renderFloatingWords();
     });
+
+    async function renderFloatingWords() {
+      const container = document.getElementById('floating-words');
+      if (!container) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/jlpt-voca/random/level?count=12');
+        if (!response.ok) {
+          return;
+        }
+
+        const items = await response.json();
+        if (!Array.isArray(items)) {
+          return;
+        }
+
+        container.innerHTML = '';
+
+        const fallbackWords = [
+          '日本語', '勉強', '語彙', '試験', '挑戦', '未来', '努力', '合格', '集中', '夢', '友情', '希望',
+        ];
+
+        const words = items
+          .map((item) => item?.word || item?.meaning_ko || item?.meaning)
+          .filter(Boolean);
+
+        while (words.length < 12 && fallbackWords.length) {
+          words.push(fallbackWords.shift());
+        }
+
+        words.slice(0, 12).forEach((word, index) => {
+          const span = document.createElement('span');
+          span.className = 'floating-word';
+          span.textContent = word;
+          span.style.left = `${8 + Math.random() * 84}%`;
+          span.style.animationDelay = `${Math.random() * -20}s`;
+          span.style.animationDuration = `${22 + Math.random() * 14}s`;
+          span.style.fontSize = `${1.1 + Math.random() * 1.6}rem`;
+          span.style.opacity = `${0.45 + Math.random() * 0.4}`;
+          container.appendChild(span);
+        });
+      } catch (error) {
+        console.warn('Failed to render floating JLPT vocabulary', error);
+      }
+    }
   </script>
 </body>
 </html>
