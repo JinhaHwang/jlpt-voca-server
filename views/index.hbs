@@ -25,35 +25,70 @@
       z-index: 0;
     }
 
-    .floating-word {
+    .floating-card {
       position: absolute;
-      bottom: -10vh;
+      bottom: -12vh;
       left: 50%;
       transform: translateX(-50%);
-      white-space: nowrap;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.75);
-      text-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      display: inline-flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 140px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+      color: #ffffff;
       animation-name: float-word;
       animation-timing-function: linear;
       animation-iteration-count: infinite;
+      pointer-events: none;
     }
 
     @keyframes float-word {
       0% {
-        transform: translate(-50%, 5vh) scale(0.9);
+        transform: translate(-50%, 8vh) scale(0.95);
         opacity: 0;
       }
-      15% {
-        opacity: 0.85;
+      10% {
+        opacity: 0.95;
       }
-      85% {
-        opacity: 0.85;
+      90% {
+        opacity: 0.95;
       }
       100% {
-        transform: translate(-50%, -120vh) scale(1.1);
+        transform: translate(-50%, -130vh) scale(1.08);
         opacity: 0;
       }
+    }
+
+    .floating-card__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .floating-card__badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.25);
+      color: #10172a;
+    }
+
+    .floating-card__word {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .floating-card__meaning {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      letter-spacing: 0.01em;
     }
 
     .container {
@@ -86,6 +121,54 @@
 
     a:hover {
       transform: translateY(-2px);
+    }
+
+    .controls {
+      margin-top: 2rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
+    }
+
+    .controls select {
+      appearance: none;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+
+    .controls button {
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: #fbbf24;
+      color: #1f2937;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .controls button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(251, 191, 36, 0.35);
+    }
+
+    .controls button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .hidden {
@@ -167,6 +250,17 @@
     <h1>🇯🇵 JLPT Vocabulary API</h1>
     <p>JLPT 단어 학습을 위한 API 서버입니다</p>
     <a href="/api/docs">API 문서 보기</a>
+    <div class="controls">
+      <label for="level-select" class="hidden">JLPT 레벨 선택</label>
+      <select id="level-select" aria-label="JLPT 레벨 선택">
+        <option value="1">N1</option>
+        <option value="2">N2</option>
+        <option value="3">N3</option>
+        <option value="4">N4</option>
+        <option value="5" selected>N5</option>
+      </select>
+      <button type="button" id="add-word-btn">추가</button>
+    </div>
   </div>
 
   <div id="error-state" class="error-container hidden">
@@ -243,7 +337,100 @@
       }
 
       renderFloatingWords();
+
+      var addButton = document.getElementById('add-word-btn');
+      var levelSelect = document.getElementById('level-select');
+
+      if (addButton && levelSelect) {
+        addButton.addEventListener('click', function() {
+          if (addButton.disabled) {
+            return;
+          }
+
+          addButton.disabled = true;
+          addWordByLevel(levelSelect.value)
+            .catch(function(error) {
+              console.warn('Failed to add floating JLPT vocabulary card', error);
+            })
+            .finally(function() {
+              addButton.disabled = false;
+            });
+        });
+      }
     });
+
+    function normalizeEntry(item) {
+      if (!item) {
+        return null;
+      }
+
+      var rawLevel = item.level ?? item.Level ?? item.levels;
+      var levelLabel = rawLevel ? String(rawLevel) : null;
+
+      return {
+        word: item.word || item.meaning || item.meaning_ko || '',
+        meaningKo: item.meaning_ko || item.meaning || '',
+        level: levelLabel,
+      };
+    }
+
+    function createFloatingCard(entry) {
+      var card = document.createElement('div');
+      card.className = 'floating-card';
+      card.style.left = `${8 + Math.random() * 84}%`;
+      card.style.animationDelay = `${Math.random() * -24}s`;
+      card.style.animationDuration = `${24 + Math.random() * 16}s`;
+      card.style.opacity = `${0.5 + Math.random() * 0.4}`;
+
+      var header = document.createElement('div');
+      header.className = 'floating-card__header';
+
+      if (entry.level) {
+        var badge = document.createElement('span');
+        badge.className = 'floating-card__badge';
+        badge.textContent = `N${entry.level}`;
+        header.appendChild(badge);
+      }
+
+      var wordEl = document.createElement('div');
+      wordEl.className = 'floating-card__word';
+      wordEl.textContent = entry.word;
+
+      header.appendChild(wordEl);
+      card.appendChild(header);
+
+      if (entry.meaningKo) {
+        var meaningEl = document.createElement('div');
+        meaningEl.className = 'floating-card__meaning';
+        meaningEl.textContent = entry.meaningKo;
+        card.appendChild(meaningEl);
+      }
+
+      return card;
+    }
+
+    async function fetchRandomEntries(count, level) {
+      var query = new URLSearchParams({ count: String(count) });
+      if (level) {
+        query.set('level', level);
+      }
+
+      const response = await fetch(`/api/jlpt-voca/random/level?${query.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch random voca: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Unexpected random voca response shape');
+      }
+
+      return data
+        .map(normalizeEntry)
+        .filter(function(entry) {
+          return entry && entry.word;
+        });
+    }
 
     async function renderFloatingWords() {
       const container = document.getElementById('floating-words');
@@ -252,44 +439,56 @@
       }
 
       try {
-        const response = await fetch('/api/jlpt-voca/random/level?count=12');
-        if (!response.ok) {
-          return;
-        }
-
-        const items = await response.json();
-        if (!Array.isArray(items)) {
-          return;
-        }
-
+        const items = await fetchRandomEntries(12);
         container.innerHTML = '';
 
         const fallbackWords = [
-          '日本語', '勉強', '語彙', '試験', '挑戦', '未来', '努力', '合格', '集中', '夢', '友情', '希望',
+          { word: '日本語', meaningKo: '일본어', level: '5' },
+          { word: '勉強', meaningKo: '공부', level: '5' },
+          { word: '語彙', meaningKo: '어휘', level: '2' },
+          { word: '試験', meaningKo: '시험', level: '3' },
+          { word: '挑戦', meaningKo: '도전', level: '2' },
+          { word: '未来', meaningKo: '미래', level: '4' },
+          { word: '努力', meaningKo: '노력', level: '3' },
+          { word: '合格', meaningKo: '합격', level: '1' },
+          { word: '集中', meaningKo: '집중', level: '1' },
+          { word: '夢', meaningKo: '꿈', level: '4' },
+          { word: '友情', meaningKo: '우정', level: '5' },
+          { word: '希望', meaningKo: '희망', level: '3' },
         ];
 
-        const words = items
-          .map((item) => item?.word || item?.meaning_ko || item?.meaning)
-          .filter(Boolean);
+        const entries = items.length ? items : [];
 
-        while (words.length < 12 && fallbackWords.length) {
-          words.push(fallbackWords.shift());
+        while (entries.length < 12 && fallbackWords.length) {
+          entries.push(fallbackWords.shift());
         }
 
-        words.slice(0, 12).forEach((word, index) => {
-          const span = document.createElement('span');
-          span.className = 'floating-word';
-          span.textContent = word;
-          span.style.left = `${8 + Math.random() * 84}%`;
-          span.style.animationDelay = `${Math.random() * -20}s`;
-          span.style.animationDuration = `${22 + Math.random() * 14}s`;
-          span.style.fontSize = `${1.1 + Math.random() * 1.6}rem`;
-          span.style.opacity = `${0.45 + Math.random() * 0.4}`;
-          container.appendChild(span);
+        entries.slice(0, 12).forEach((entry) => {
+          const card = createFloatingCard(entry);
+          container.appendChild(card);
         });
       } catch (error) {
         console.warn('Failed to render floating JLPT vocabulary', error);
       }
+    }
+
+    async function addWordByLevel(level) {
+      const container = document.getElementById('floating-words');
+      if (!container) {
+        return;
+      }
+
+      const entries = await fetchRandomEntries(1, level);
+      const entry =
+        entries[0] ||
+        {
+          word: '学習',
+          meaningKo: '학습',
+          level: level,
+        };
+
+      const card = createFloatingCard(entry);
+      container.appendChild(card);
     }
   </script>
 </body>
