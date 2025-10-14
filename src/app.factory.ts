@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import 'hbs';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import type { NextFunction, Request, Response } from 'express';
 
 // Swagger 문서를 저장하기 위한 WeakMap
 const swaggerDocuments = new WeakMap<NestExpressApplication, any>();
@@ -17,6 +18,24 @@ export async function createApp(viewsDir?: string) {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: ['error', 'warn', 'log'],
   });
+
+  const isDevEnv = (process.env.NODE_ENV ?? 'development') !== 'production';
+  if (isDevEnv) {
+    const requestLogger = new Logger('HTTP');
+
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      const startedAt = Date.now();
+
+      res.on('finish', () => {
+        const duration = Date.now() - startedAt;
+        requestLogger.log(
+          `${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`,
+        );
+      });
+
+      next();
+    });
+  }
 
   // Handlebars 설정 (옵션)
   try {
