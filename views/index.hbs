@@ -85,6 +85,12 @@
       text-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
     }
 
+    .floating-card__furigana {
+      font-size: 0.85rem;
+      opacity: 0.75;
+      letter-spacing: 0.03em;
+    }
+
     .floating-card__meaning {
       font-size: 0.95rem;
       opacity: 0.85;
@@ -366,9 +372,17 @@
 
       var rawLevel = item.level ?? item.Level ?? item.levels;
       var levelLabel = rawLevel ? String(rawLevel) : null;
+      var furigana =
+        item.furigana ||
+        item.reading ||
+        item.pronunciation ||
+        item.kana ||
+        item.word_kana ||
+        '';
 
       return {
         word: item.word || item.meaning || item.meaning_ko || '',
+        furigana: furigana,
         meaningKo: item.meaning_ko || item.meaning || '',
         level: levelLabel,
       };
@@ -398,6 +412,13 @@
 
       header.appendChild(wordEl);
       card.appendChild(header);
+
+      if (entry.furigana) {
+        var furiganaEl = document.createElement('div');
+        furiganaEl.className = 'floating-card__furigana';
+        furiganaEl.textContent = entry.furigana;
+        card.appendChild(furiganaEl);
+      }
 
       if (entry.meaningKo) {
         var meaningEl = document.createElement('div');
@@ -443,18 +464,18 @@
         container.innerHTML = '';
 
         const fallbackWords = [
-          { word: '日本語', meaningKo: '일본어', level: '5' },
-          { word: '勉強', meaningKo: '공부', level: '5' },
-          { word: '語彙', meaningKo: '어휘', level: '2' },
-          { word: '試験', meaningKo: '시험', level: '3' },
-          { word: '挑戦', meaningKo: '도전', level: '2' },
-          { word: '未来', meaningKo: '미래', level: '4' },
-          { word: '努力', meaningKo: '노력', level: '3' },
-          { word: '合格', meaningKo: '합격', level: '1' },
-          { word: '集中', meaningKo: '집중', level: '1' },
-          { word: '夢', meaningKo: '꿈', level: '4' },
-          { word: '友情', meaningKo: '우정', level: '5' },
-          { word: '希望', meaningKo: '희망', level: '3' },
+          { word: '日本語', furigana: 'にほんご', meaningKo: '일본어', level: '5' },
+          { word: '勉強', furigana: 'べんきょう', meaningKo: '공부', level: '5' },
+          { word: '語彙', furigana: 'ごい', meaningKo: '어휘', level: '2' },
+          { word: '試験', furigana: 'しけん', meaningKo: '시험', level: '3' },
+          { word: '挑戦', furigana: 'ちょうせん', meaningKo: '도전', level: '2' },
+          { word: '未来', furigana: 'みらい', meaningKo: '미래', level: '4' },
+          { word: '努力', furigana: 'どりょく', meaningKo: '노력', level: '3' },
+          { word: '合格', furigana: 'ごうかく', meaningKo: '합격', level: '1' },
+          { word: '集中', furigana: 'しゅうちゅう', meaningKo: '집중', level: '1' },
+          { word: '夢', furigana: 'ゆめ', meaningKo: '꿈', level: '4' },
+          { word: '友情', furigana: 'ゆうじょう', meaningKo: '우정', level: '5' },
+          { word: '希望', furigana: 'きぼう', meaningKo: '희망', level: '3' },
         ];
 
         const entries = items.length ? items : [];
@@ -483,6 +504,7 @@
         entries[0] ||
         {
           word: '学習',
+          furigana: 'がくしゅう',
           meaningKo: '학습',
           level: level,
         };
