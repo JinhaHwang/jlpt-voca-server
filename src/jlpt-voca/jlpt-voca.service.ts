@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
-import { GetRandomVocaQueryDto } from './dto/get-random-voca-query.dto';
+import { GetRandomVocaByIdsQueryDto } from './dto/get-random-voca-by-ids-query.dto';
+import { GetRandomVocaByLevelQueryDto } from './dto/get-random-voca-by-level-query.dto';
 import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
 
 export interface JlptVocaRecord {
@@ -66,32 +67,12 @@ export class JlptVocaService {
     };
   }
 
-  async findRandom(query: GetRandomVocaQueryDto) {
+  async findRandomByLevel(
+    query: GetRandomVocaByLevelQueryDto,
+  ): Promise<JlptVocaRecord[]> {
     const client = this.supabaseService.getClient();
 
-    // ids가 있는 경우: 해당 ids의 voca들을 가져와서 랜덤으로 섞어서 반환
-    if (query.ids && query.ids.length > 0) {
-      const { data, error } = await client
-        .from('DD_JLPT_VOCA')
-        .select('*')
-        .in('id', query.ids);
-
-      if (error) {
-        throw new InternalServerErrorException(error.message);
-      }
-
-      // 배열을 랜덤으로 섞기 (Fisher-Yates shuffle)
-      const shuffled = [...(data ?? [])];
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-
-      return shuffled as JlptVocaRecord[];
-    }
-
-    // ids가 없는 경우: 기존 로직 (랜덤 1개 반환)
-    // 먼저 전체 개수를 가져옵니다
+    const requestedCount = Math.min(query.count ?? 1, 50);
     let countBuilder = client
       .from('DD_JLPT_VOCA')
       .select('*', { count: 'exact', head: true });
@@ -107,29 +88,66 @@ export class JlptVocaService {
     }
 
     if (!count || count === 0) {
-      return null;
+      return [];
     }
 
-    // 랜덤 offset 생성
-    const randomOffset = Math.floor(Math.random() * count);
+    const availableCount = count ?? 0;
+    const limit = Math.min(requestedCount, availableCount);
+    const offsets = new Set<number>();
+    const items: JlptVocaRecord[] = [];
 
-    // 랜덤 위치의 단어 하나 가져오기
-    let dataBuilder = client.from('DD_JLPT_VOCA').select('*');
+    while (items.length < limit && offsets.size < availableCount) {
+      const randomOffset = Math.floor(Math.random() * availableCount);
 
-    if (query.level) {
-      dataBuilder = dataBuilder.eq('level', query.level);
+      if (offsets.has(randomOffset)) {
+        continue;
+      }
+
+      offsets.add(randomOffset);
+
+      let dataBuilder = client.from('DD_JLPT_VOCA').select('*');
+
+      if (query.level) {
+        dataBuilder = dataBuilder.eq('level', query.level);
+      }
+
+      const { data, error } = await dataBuilder
+        .range(randomOffset, randomOffset)
+        .limit(1);
+
+      if (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      if (data && data.length > 0) {
+        items.push(data[0] as JlptVocaRecord);
+      }
     }
 
-    const result = await dataBuilder
-      .range(randomOffset, randomOffset)
-      .limit(1)
-      .single();
+    return items;
+  }
 
-    if (result.error) {
-      throw new InternalServerErrorException(result.error.message);
+  async findRandomByIds(
+    query: GetRandomVocaByIdsQueryDto,
+  ): Promise<JlptVocaRecord[]> {
+    const client = this.supabaseService.getClient();
+
+    const { data, error } = await client
+      .from('DD_JLPT_VOCA')
+      .select('*')
+      .in('id', query.ids);
+
+    if (error) {
+      throw new InternalServerErrorException(error.message);
     }
 
-    return result.data as JlptVocaRecord;
+    const shuffled = [...(data ?? [])];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled as JlptVocaRecord[];
   }
 
   async findByWordExact(query: GetWordExactQueryDto) {

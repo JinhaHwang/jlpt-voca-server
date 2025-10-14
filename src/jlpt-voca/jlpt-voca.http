@@ -59,33 +59,20 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/word?search=学校
 # JLPT Voca Random APIs
 ###############################################
 
-### 랜덤 단어 조회 (모든 레벨)
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random
+### 레벨 기반 랜덤 단어 조회 (전체, 1개 기본)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random/level
 
-### N1 레벨 랜덤 단어 조회
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=1
+### N1 레벨 랜덤 단어 3개 조회
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random/level?level=1&count=3
 
-### N2 레벨 랜덤 단어 조회
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=2
+### N3 레벨 랜덤 단어 5개 조회
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random/level?level=3&count=5
 
-### N3 레벨 랜덤 단어 조회
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=3
+### 특정 ID 배열로 단어 랜덤 섞기
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random/ids?ids=1&ids=2&ids=3&ids=4&ids=5
 
-### N4 레벨 랜덤 단어 조회
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=4
-
-### N5 레벨 랜덤 단어 조회
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?level=5
-
-### 특정 ID 배열로 단어 조회 (랜덤 섞기)
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=1&ids=2&ids=3&ids=4&ids=5
-
-
-### 특정 ID 배열로 단어 조회 (단일 ID)
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=1
-
-### 특정 ID 배열로 단어 조회 (2개)
-GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random?ids=100&ids=200
+### 특정 ID 1개 조회 (랜덤 섞기 의미 없음)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/random/ids?ids=1
 
 ###############################################
 # Error Cases (Validation Test)
@@ -99,4 +86,3 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?limit=201
 
 ### 잘못된 limit 값 (0)
 GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca?limit=0
-

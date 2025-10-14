@@ -1,7 +1,8 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
-import { GetRandomVocaQueryDto } from './dto/get-random-voca-query.dto';
+import { GetRandomVocaByIdsQueryDto } from './dto/get-random-voca-by-ids-query.dto';
+import { GetRandomVocaByLevelQueryDto } from './dto/get-random-voca-by-level-query.dto';
 import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
 import { JlptVocaService } from './jlpt-voca.service';
 
@@ -20,14 +21,22 @@ export class JlptVocaController {
     return this.jlptVocaService.findAll(query);
   }
 
-  @Get('random')
+  @Get('random/level')
   @ApiOperation({
-    summary: '랜덤 단어 조회',
-    description:
-      'ids가 있으면 해당 단어들을 랜덤으로 섞어서 반환, 없으면 레벨별 또는 전체에서 랜덤으로 단어 1개 조회',
+    summary: '레벨 기반 랜덤 단어 조회',
+    description: '레벨 별 또는 전체에서 지정한 개수만큼 랜덤 단어 조회',
   })
-  async random(@Query() query: GetRandomVocaQueryDto) {
-    return this.jlptVocaService.findRandom(query);
+  async randomByLevel(@Query() query: GetRandomVocaByLevelQueryDto) {
+    return this.jlptVocaService.findRandomByLevel(query);
+  }
+
+  @Get('random/ids')
+  @ApiOperation({
+    summary: 'ID 배열 기반 단어 랜덤 섞기',
+    description: '쿼리로 전달된 ID 배열에 해당하는 단어들을 랜덤으로 섞어서 반환',
+  })
+  async randomByIds(@Query() query: GetRandomVocaByIdsQueryDto) {
+    return this.jlptVocaService.findRandomByIds(query);
   }
 
   @Get('word')
