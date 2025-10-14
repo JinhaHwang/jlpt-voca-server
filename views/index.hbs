@@ -25,6 +25,37 @@
       z-index: 0;
     }
 
+    .swagger-link {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 0;
+      text-decoration: none;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.28);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 2;
+    }
+
+    .swagger-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.32);
+    }
+
+    .swagger-link img {
+      width: 24px;
+      height: 24px;
+      image-rendering: -webkit-optimize-contrast;
+    }
+
     .floating-card {
       position: absolute;
       bottom: -12vh;
@@ -177,7 +208,20 @@
       box-shadow: none;
     }
 
+    .toggle-meaning-btn {
+      background: rgba(96, 165, 250, 0.32);
+      color: #f8fafc;
+    }
+
+    .toggle-meaning-btn:hover {
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
+    }
+
     .hidden {
+      display: none;
+    }
+
+    .meaning-hidden .floating-card__meaning {
       display: none;
     }
 
@@ -250,12 +294,25 @@
   </style>
 </head>
 <body>
+  <a
+    class="swagger-link"
+    href="/api/docs"
+    target="_blank"
+    rel="noopener"
+    aria-label="Swagger API 문서 보기"
+    title="Swagger API 문서 보기"
+  >
+    <img
+      src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/favicon-32x32.png"
+      alt=""
+      aria-hidden="true"
+    />
+  </a>
   <div class="floating-words" id="floating-words" aria-hidden="true"></div>
 
   <div id="welcome-state" class="container">
     <h1>🇯🇵 JLPT Vocabulary API</h1>
     <p>JLPT 단어 학습을 위한 API 서버입니다</p>
-    <a href="/api/docs">API 문서 보기</a>
     <div class="controls">
       <label for="level-select" class="hidden">JLPT 레벨 선택</label>
       <select id="level-select" aria-label="JLPT 레벨 선택">
@@ -266,6 +323,14 @@
         <option value="5" selected>N5</option>
       </select>
       <button type="button" id="add-word-btn">추가</button>
+      <button
+        type="button"
+        id="toggle-meaning-btn"
+        class="toggle-meaning-btn"
+        aria-pressed="false"
+      >
+        뜻 숨기기
+      </button>
     </div>
   </div>
 
@@ -346,6 +411,8 @@
 
       var addButton = document.getElementById('add-word-btn');
       var levelSelect = document.getElementById('level-select');
+      var toggleMeaningButton = document.getElementById('toggle-meaning-btn');
+      var meaningVisible = true;
 
       if (addButton && levelSelect) {
         addButton.addEventListener('click', function() {
@@ -362,6 +429,22 @@
               addButton.disabled = false;
             });
         });
+      }
+
+      function updateMeaningVisibility() {
+        document.body.classList.toggle('meaning-hidden', !meaningVisible);
+        if (toggleMeaningButton) {
+          toggleMeaningButton.textContent = meaningVisible ? '뜻 숨기기' : '뜻 보기';
+          toggleMeaningButton.setAttribute('aria-pressed', String(!meaningVisible));
+        }
+      }
+
+      if (toggleMeaningButton) {
+        toggleMeaningButton.addEventListener('click', function() {
+          meaningVisible = !meaningVisible;
+          updateMeaningVisibility();
+        });
+        updateMeaningVisibility();
       }
     });
 
