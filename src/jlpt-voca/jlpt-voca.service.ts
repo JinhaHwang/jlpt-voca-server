@@ -24,8 +24,11 @@ export class JlptVocaService {
     const page = query.page ?? 1;
     const from = (page - 1) * limit;
     const to = from + limit - 1;
+    const onlyMeta = query.onlyMeta ?? false;
 
-    let builder = client.from('DD_JLPT_VOCA').select('*', { count: 'exact' });
+    let builder = client
+      .from('DD_JLPT_VOCA')
+      .select('*', { count: 'exact', head: onlyMeta });
 
     if (query.level) {
       builder = builder.eq('level', query.level);
@@ -50,6 +53,24 @@ export class JlptVocaService {
       builder = builder.ilike('meaning_ko', `%${query.meaning_ko}%`);
     }
 
+    if (onlyMeta) {
+      const { error, count } = await builder;
+
+      if (error) {
+        throw new InternalServerErrorException(error.message);
+      }
+
+      return {
+        items: [],
+        meta: {
+          total: count ?? 0,
+          page,
+          limit,
+          totalPages: count && limit > 0 ? Math.ceil(count / limit) : undefined,
+        },
+      };
+    }
+
     const { data, error, count } = await builder.range(from, to);
 
     if (error) {
@@ -67,64 +88,63 @@ export class JlptVocaService {
     };
   }
 
+  async getLevelsMeta() {
+    const client = this.supabaseService.getClient();
+    const levels = ['1', '2', '3', '4', '5'];
+
+    const results = await Promise.all(
+      levels.map(async (level) => {
+        const { error, count } = await client
+          .from('DD_JLPT_VOCA')
+          .select('*', { count: 'exact', head: true })
+          .eq('level', level);
+
+        if (error) {
+          throw new InternalServerErrorException(error.message);
+        }
+
+        const total = count ?? 0;
+
+        return {
+          level,
+          total,
+        };
+      }),
+    );
+
+    const aggregatedTotal = results.reduce((sum, item) => sum + item.total, 0);
+
+    return {
+      total: aggregatedTotal,
+      levels: results,
+    };
+  }
+
   async findRandomByLevel(
     query: GetRandomVocaByLevelQueryDto,
   ): Promise<JlptVocaRecord[]> {
     const client = this.supabaseService.getClient();
 
-    const requestedCount = Math.min(query.count ?? 1, 50);
-    let countBuilder = client
-      .from('DD_JLPT_VOCA')
-      .select('*', { count: 'exact', head: true });
+    const limit = Math.min(query.count ?? 1, 50);
 
-    if (query.level) {
-      countBuilder = countBuilder.eq('level', query.level);
-    }
-
-    const { count, error: countError } = await countBuilder;
-
-    if (countError) {
-      throw new InternalServerErrorException(countError.message);
-    }
-
-    if (!count || count === 0) {
+    if (limit <= 0) {
       return [];
     }
+    let builder = client.from('DD_JLPT_VOCA').select('*');
 
-    const availableCount = count ?? 0;
-    const limit = Math.min(requestedCount, availableCount);
-    const offsets = new Set<number>();
-    const items: JlptVocaRecord[] = [];
-
-    while (items.length < limit && offsets.size < availableCount) {
-      const randomOffset = Math.floor(Math.random() * availableCount);
-
-      if (offsets.has(randomOffset)) {
-        continue;
-      }
-
-      offsets.add(randomOffset);
-
-      let dataBuilder = client.from('DD_JLPT_VOCA').select('*');
-
-      if (query.level) {
-        dataBuilder = dataBuilder.eq('level', query.level);
-      }
-
-      const { data, error } = await dataBuilder
-        .range(randomOffset, randomOffset)
-        .limit(1);
-
-      if (error) {
-        throw new InternalServerErrorException(error.message);
-      }
-
-      if (data && data.length > 0) {
-        items.push(data[0] as JlptVocaRecord);
-      }
+    if (query.level) {
+      builder = builder.eq('level', query.level);
     }
 
-    return items;
+    const { data, error } = await builder
+      .order('random()', { ascending: true })
+      .limit(limit);
+
+    if (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return (data ?? []) as JlptVocaRecord[];
   }
 
   async findRandomByIds(

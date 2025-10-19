@@ -21,6 +21,15 @@ export class JlptVocaController {
     return this.jlptVocaService.findAll(query);
   }
 
+  @Get('totals-by-level')
+  @ApiOperation({
+    summary: '레벨 메타 정보 조회',
+    description: 'JLPT 레벨별 전체 단어 수와 전체 합계를 반환',
+  })
+  async levelsMeta() {
+    return this.jlptVocaService.getLevelsMeta();
+  }
+
   @Get('random/level')
   @ApiOperation({
     summary: '레벨 기반 랜덤 단어 조회',

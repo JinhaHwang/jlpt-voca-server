@@ -30,6 +30,12 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?level=1&page=2&limit=20
 ### 최대 limit 200개 테스트
 GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?limit=200
 
+### 메타 정보만 조회 (items 제외)
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?onlyMeta=true&page=1&limit=200&level=3
+
+### 레벨 메타 정보 조회
+GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/totals-by-level
+
 ###############################################
 # JLPT Voca Search APIs
 ###############################################
