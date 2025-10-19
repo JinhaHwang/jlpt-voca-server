@@ -17,6 +17,15 @@ export interface JlptVocaRecord {
 export class JlptVocaService {
   constructor(private readonly supabaseService: SupabaseService) {}
 
+  private shuffleArray<T>(items: T[]): T[] {
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
   async findAll(query: GetJlptVocaQueryDto) {
     const client = this.supabaseService.getClient();
 
@@ -130,21 +139,42 @@ export class JlptVocaService {
     if (limit <= 0) {
       return [];
     }
-    let builder = client.from('DD_JLPT_VOCA').select('*');
+    const idsQuery = client.from('DD_JLPT_VOCA').select('id');
 
     if (query.level) {
-      builder = builder.eq('level', query.level);
+      idsQuery.eq('level', query.level);
     }
 
-    const { data, error } = await builder
-      .order('random()', { ascending: true })
-      .limit(limit);
+    const { data: candidateIds, error: idsError } = await idsQuery;
+
+    if (idsError) {
+      throw new InternalServerErrorException(idsError.message);
+    }
+
+    const rows = (candidateIds ?? []) as Array<{ id: number | string }>;
+    const shuffledIds = this.shuffleArray(
+      rows.map((row) => Number(row.id)).filter((id) => Number.isFinite(id)),
+    );
+
+    if (shuffledIds.length === 0) {
+      return [];
+    }
+
+    const selectedIds = shuffledIds.slice(
+      0,
+      Math.min(limit, shuffledIds.length),
+    );
+
+    const { data, error } = await client
+      .from('DD_JLPT_VOCA')
+      .select('*')
+      .in('id', selectedIds);
 
     if (error) {
       throw new InternalServerErrorException(error.message);
     }
 
-    return (data ?? []) as JlptVocaRecord[];
+    return this.shuffleArray(data ?? []) as JlptVocaRecord[];
   }
 
   async findRandomByIds(
@@ -161,13 +191,7 @@ export class JlptVocaService {
       throw new InternalServerErrorException(error.message);
     }
 
-    const shuffled = [...(data ?? [])];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    return shuffled as JlptVocaRecord[];
+    return this.shuffleArray(data ?? []) as JlptVocaRecord[];
   }
 
   async findByWordExact(query: GetWordExactQueryDto) {
