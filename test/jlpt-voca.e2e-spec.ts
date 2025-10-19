@@ -99,13 +99,19 @@ class MockSupabaseQuery {
 
   async maybeSingle() {
     const response = await this.buildResponse();
-    const data = Array.isArray(response.data) ? response.data[0] ?? null : null;
+    const data = Array.isArray(response.data)
+      ? (response.data[0] ?? null)
+      : null;
     return { data, error: null };
   }
 
   then<TResult1 = unknown, TResult2 = never>(
     onfulfilled?:
-      | ((value: { data: unknown; error: null; count?: number }) => TResult1 | PromiseLike<TResult1>)
+      | ((value: {
+          data: unknown;
+          error: null;
+          count?: number;
+        }) => TResult1 | PromiseLike<TResult1>)
       | undefined
       | null,
     onrejected?:
@@ -191,7 +197,13 @@ describe('JLPT Vocabulary (e2e)', () => {
 
   const sampleVoca: JlptVocaRecord[] = [
     { id: 1, level: '5', word: '学校', meaning: 'school', meaning_ko: '학교' },
-    { id: 2, level: '5', word: '先生', meaning: 'teacher', meaning_ko: '선생님' },
+    {
+      id: 2,
+      level: '5',
+      word: '先生',
+      meaning: 'teacher',
+      meaning_ko: '선생님',
+    },
     { id: 3, level: '5', word: '猫', meaning: 'cat', meaning_ko: '고양이' },
     { id: 4, level: '5', word: '犬', meaning: 'dog', meaning_ko: '개' },
     { id: 5, level: '5', word: '本', meaning: 'book', meaning_ko: '책' },
@@ -205,16 +217,70 @@ describe('JLPT Vocabulary (e2e)', () => {
     { id: 13, level: '3', word: '成績', meaning: 'grade', meaning_ko: '성적' },
     { id: 14, level: '3', word: '部屋', meaning: 'room', meaning_ko: '방' },
     { id: 15, level: '3', word: '映画', meaning: 'movie', meaning_ko: '영화' },
-    { id: 16, level: '2', word: '自由', meaning: 'freedom', meaning_ko: '자유' },
-    { id: 17, level: '2', word: '経験', meaning: 'experience', meaning_ko: '경험' },
-    { id: 18, level: '2', word: '準備', meaning: 'prepare', meaning_ko: '준비' },
-    { id: 19, level: '2', word: '連絡', meaning: 'contact', meaning_ko: '연락' },
-    { id: 20, level: '2', word: '関係', meaning: 'relation', meaning_ko: '관계' },
-    { id: 21, level: '1', word: '存在', meaning: 'existence', meaning_ko: '존재' },
+    {
+      id: 16,
+      level: '2',
+      word: '自由',
+      meaning: 'freedom',
+      meaning_ko: '자유',
+    },
+    {
+      id: 17,
+      level: '2',
+      word: '経験',
+      meaning: 'experience',
+      meaning_ko: '경험',
+    },
+    {
+      id: 18,
+      level: '2',
+      word: '準備',
+      meaning: 'prepare',
+      meaning_ko: '준비',
+    },
+    {
+      id: 19,
+      level: '2',
+      word: '連絡',
+      meaning: 'contact',
+      meaning_ko: '연락',
+    },
+    {
+      id: 20,
+      level: '2',
+      word: '関係',
+      meaning: 'relation',
+      meaning_ko: '관계',
+    },
+    {
+      id: 21,
+      level: '1',
+      word: '存在',
+      meaning: 'existence',
+      meaning_ko: '존재',
+    },
     { id: 22, level: '1', word: '論文', meaning: 'thesis', meaning_ko: '논문' },
-    { id: 23, level: '1', word: '環境', meaning: 'environment', meaning_ko: '환경' },
-    { id: 24, level: '1', word: '情報', meaning: 'information', meaning_ko: '정보' },
-    { id: 25, level: '1', word: '技術', meaning: 'technology', meaning_ko: '기술' },
+    {
+      id: 23,
+      level: '1',
+      word: '環境',
+      meaning: 'environment',
+      meaning_ko: '환경',
+    },
+    {
+      id: 24,
+      level: '1',
+      word: '情報',
+      meaning: 'information',
+      meaning_ko: '정보',
+    },
+    {
+      id: 25,
+      level: '1',
+      word: '技術',
+      meaning: 'technology',
+      meaning_ko: '기술',
+    },
   ];
 
   const levelCounts = sampleVoca.reduce<Record<string, number>>((acc, item) => {
@@ -283,23 +349,23 @@ describe('JLPT Vocabulary (e2e)', () => {
     });
 
     it('applies level filter', async () => {
-      await Promise.all(
-        Object.keys(levelCounts).map(async (level) => {
-          const response = await request(app.getHttpServer())
-            .get(`/api/jlpt-voca/search?level=${level}`)
-            .expect(200);
+      for (const level of Object.keys(levelCounts)) {
+        const response = await request(app.getHttpServer())
+          .get(`/api/jlpt-voca/search?level=${level}`)
+          .expect(200);
 
-          expect(response.body.items).toHaveLength(levelCounts[level]);
-          expect(
-            response.body.items.every((item: { level: string }) => item.level === level),
-          ).toBe(true);
-          expect(response.body.meta).toMatchObject({
-            total: levelCounts[level],
-            page: 1,
-            totalPages: 1,
-          });
-        }),
-      );
+        expect(response.body.items).toHaveLength(levelCounts[level]);
+        expect(
+          response.body.items.every(
+            (item: { level: string }) => item.level === level,
+          ),
+        ).toBe(true);
+        expect(response.body.meta).toMatchObject({
+          total: levelCounts[level],
+          page: 1,
+          totalPages: 1,
+        });
+      }
     });
 
     it('honors pagination with level filter', async () => {
@@ -440,11 +506,9 @@ describe('JLPT Vocabulary (e2e)', () => {
 
       expect(response.body.total).toBe(sampleVoca.length);
       expect(response.body.levels).toHaveLength(5);
-      response.body.levels.forEach(
-        (item: { level: string; total: number }) => {
-          expect(item.total).toBe(levelCounts[item.level]);
-        },
-      );
+      response.body.levels.forEach((item: { level: string; total: number }) => {
+        expect(item.total).toBe(levelCounts[item.level]);
+      });
     });
   });
 
@@ -504,13 +568,14 @@ describe('JLPT Vocabulary (e2e)', () => {
       expect(ids).toEqual([1, 2, 3, 4, 5]);
     });
 
-    it('returns single record when only one id provided', async () => {
+    it('rejects single id requests with validation error', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/jlpt-voca/random/ids?ids=1')
-        .expect(200);
+        .expect(400);
 
-      expect(response.body).toHaveLength(1);
-      expect(response.body[0].id).toBe(1);
+      expect(response.body.message).toEqual(
+        expect.arrayContaining(['ids must be an array']),
+      );
     });
   });
 });
