@@ -1,9 +1,10 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
 import { GetRandomVocaByIdsQueryDto } from './dto/get-random-voca-by-ids-query.dto';
 import { GetRandomVocaByLevelQueryDto } from './dto/get-random-voca-by-level-query.dto';
 import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
+import { GenerateExampleSentenceDto } from './dto/generate-example-sentence.dto';
 import { JlptVocaService } from './jlpt-voca.service';
 
 @ApiTags('JLPT Vocabulary')
@@ -55,5 +56,16 @@ export class JlptVocaController {
   })
   async findByWordExact(@Query() query: GetWordExactQueryDto) {
     return this.jlptVocaService.findByWordExact(query);
+  }
+
+  @Post('examples')
+  @ApiOperation({
+    summary: 'OpenAI 예문 및 후리가나 생성',
+    description:
+      '일본어 단어를 입력받아 OpenAI 에이전트를 통해 예문과 한자별 후리가나 매핑을 생성합니다.',
+  })
+  @HttpCode(200)
+  async createExampleSentence(@Body() body: GenerateExampleSentenceDto) {
+    return this.jlptVocaService.generateExampleSentenceForWord(body.word);
   }
 }

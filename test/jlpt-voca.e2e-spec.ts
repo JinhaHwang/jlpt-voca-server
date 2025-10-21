@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { SupabaseService } from '../src/supabase/supabase.service';
+import { JlptVocaAgentsService } from '../src/jlpt-voca/jlpt-voca-agents.service';
 
 type JlptVocaRecord = {
   id: number;
@@ -194,6 +195,9 @@ class MockSupabaseQuery {
 describe('JLPT Vocabulary (e2e)', () => {
   let app: INestApplication;
   let mathRandomSpy: jest.SpyInstance;
+  let agentsServiceMock: {
+    generateExampleSentence: jest.Mock;
+  };
 
   const sampleVoca: JlptVocaRecord[] = [
     { id: 1, level: '5', word: '学校', meaning: 'school', meaning_ko: '학교' },
@@ -288,9 +292,29 @@ describe('JLPT Vocabulary (e2e)', () => {
     return acc;
   }, {});
 
+  const agentExampleResponse = {
+    sentence: '猫が窓辺で日向ぼっこをしている。',
+    solution: {
+      korean_meaning: '고양이가 창가에서 햇볕을 쬐고 있어요.',
+      original_sentence: '猫が窓辺で日向ぼっこをしている。',
+      furigana_by_index: {
+        '0': 'ねこ',
+        '3': 'まどべ',
+        '6': 'ひなた',
+      },
+    },
+    rawSolutionJson:
+      '{"korean_meaning":"고양이가 창가에서 햇볕을 쬐고 있어요.","original_sentence":"猫が窓辺で日向ぼっこをしている。","furigana_by_index":{"0":"ねこ","3":"まどべ","6":"ひなた"}}',
+  };
+
   beforeAll(async () => {
     process.env.SUPABASE_URL ??= 'http://localhost:54321';
     process.env.SUPABASE_SERVICE_ROLE_SECRET ??= 'dummy-service-role-secret';
+    agentsServiceMock = {
+      generateExampleSentence: jest
+        .fn()
+        .mockResolvedValue(agentExampleResponse),
+    };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -299,6 +323,8 @@ describe('JLPT Vocabulary (e2e)', () => {
       .useValue({
         getClient: () => new MockSupabaseClient(sampleVoca),
       })
+      .overrideProvider(JlptVocaAgentsService)
+      .useValue(agentsServiceMock)
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -576,6 +602,33 @@ describe('JLPT Vocabulary (e2e)', () => {
       expect(response.body.message).toEqual(
         expect.arrayContaining(['ids must be an array']),
       );
+    });
+  });
+
+  describe('/api/jlpt-voca/examples', () => {
+    it('returns generated example sentence with furigana', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/jlpt-voca/examples')
+        .send({ word: '猫' })
+        .expect(200);
+
+      expect(response.body).toEqual({
+        word: '猫',
+        sentence: agentExampleResponse.sentence,
+        korean_meaning: agentExampleResponse.solution.korean_meaning,
+        furigana_by_index:
+          agentExampleResponse.solution.furigana_by_index,
+      });
+      expect(agentsServiceMock.generateExampleSentence).toHaveBeenCalledWith(
+        '猫',
+      );
+    });
+
+    it('rejects empty word input', async () => {
+      await request(app.getHttpServer())
+        .post('/api/jlpt-voca/examples')
+        .send({ word: '' })
+        .expect(400);
     });
   });
 });

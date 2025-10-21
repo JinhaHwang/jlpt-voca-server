@@ -92,3 +92,15 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?limit=201
 
 ### 잘못된 limit 값 (0)
 GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?limit=0
+
+###############################################
+# JLPT Voca Example Sentence (OpenAI Agent)
+###############################################
+
+### 예문 생성 (짧은 단어)
+POST {{baseUrl}}/{{apiPrefix}}/jlpt-voca/examples
+Content-Type: application/json
+
+{
+  "word": "ずっと"
+}

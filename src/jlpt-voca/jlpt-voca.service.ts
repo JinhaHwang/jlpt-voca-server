@@ -8,6 +8,7 @@ import { GetJlptVocaQueryDto } from './dto/get-jlpt-voca-query.dto';
 import { GetRandomVocaByIdsQueryDto } from './dto/get-random-voca-by-ids-query.dto';
 import { GetRandomVocaByLevelQueryDto } from './dto/get-random-voca-by-level-query.dto';
 import { GetWordExactQueryDto } from './dto/get-word-exact-query.dto';
+import { JlptVocaAgentsService } from './jlpt-voca-agents.service';
 
 export interface JlptVocaRecord {
   [key: string]: unknown;
@@ -15,7 +16,10 @@ export interface JlptVocaRecord {
 
 @Injectable()
 export class JlptVocaService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly jlptVocaAgentsService: JlptVocaAgentsService,
+  ) {}
 
   private shuffleArray<T>(items: T[]): T[] {
     const shuffled = [...items];
@@ -218,5 +222,21 @@ export class JlptVocaService {
     }
 
     return data as JlptVocaRecord;
+  }
+
+  async generateExampleSentenceForWord(word: string) {
+    const sanitizedWord = word.trim();
+
+    const result =
+      await this.jlptVocaAgentsService.generateExampleSentence(
+        sanitizedWord,
+      );
+
+    return {
+      word: sanitizedWord,
+      sentence: result.sentence,
+      korean_meaning: result.solution.korean_meaning,
+      furigana_by_index: result.solution.furigana_by_index,
+    };
   }
 }
