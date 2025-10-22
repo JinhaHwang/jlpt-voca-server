@@ -6,6 +6,7 @@ import { JlptVocaModule } from './jlpt-voca/jlpt-voca.module';
 import { ProfilesModule } from './profiles/profiles.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
+import { AiController } from './ai/ai.controller';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { AppController } from './app.controller';
     HealthModule,
     JlptVocaModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AiController],
 })
 export class AppModule {}

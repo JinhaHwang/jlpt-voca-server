@@ -1,0 +1,7 @@
+### AI My Bus API Tests
+
+@lat = 37.34653374826532
+@lng = 127.0988053263622
+
+### 위치 정보를 쿼리스트링으로 전달
+POST {{baseUrl}}/{{apiPrefix}}/ai/my-bus?lat={{lat}}&lng={{lng}}
