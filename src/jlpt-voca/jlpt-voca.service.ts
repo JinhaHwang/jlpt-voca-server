@@ -236,7 +236,7 @@ export class JlptVocaService {
       word: sanitizedWord,
       sentence: result.sentence,
       korean_meaning: result.solution.korean_meaning,
-      furigana_by_index: result.solution.furigana_by_index,
+      furigana_positions: result.solution.furigana_positions,
     };
   }
 }

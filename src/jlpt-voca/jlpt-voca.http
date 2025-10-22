@@ -97,6 +97,25 @@ GET {{baseUrl}}/{{apiPrefix}}/jlpt-voca/search?limit=0
 # JLPT Voca Example Sentence (OpenAI Agent)
 ###############################################
 
+### 단어 기반 예문 및 후리가나 생성 (인덱스 구간 포함)
+POST {{baseUrl}}/{{apiPrefix}}/jlpt-voca/examples
+Content-Type: application/json
+
+{
+  "word": "学校"
+}
+
+# 예상 응답 예시
+# {
+#   "word": "学校",
+#   "sentence": "彼女は学校で新しい友達を作った。",
+#   "korean_meaning": "그녀는 학교에서 새로운 친구를 사귀었다.",
+#   "furigana_positions": [
+#     { "start": 3, "end": 3, "text": "がっ" },
+#     { "start": 4, "end": 4, "text": "こう" }
+#   ]
+# }
+
 ### 예문 생성 (짧은 단어)
 POST {{baseUrl}}/{{apiPrefix}}/jlpt-voca/examples
 Content-Type: application/json
