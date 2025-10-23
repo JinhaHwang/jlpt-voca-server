@@ -7,6 +7,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AiController } from './ai/ai.controller';
+import { GeoModule } from './geo/geo.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AiController } from './ai/ai.controller';
     ProfilesModule,
     HealthModule,
     JlptVocaModule,
+    GeoModule,
   ],
   controllers: [AppController, AiController],
 })

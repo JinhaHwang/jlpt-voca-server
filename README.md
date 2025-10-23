@@ -29,6 +29,9 @@ Swagger 문서는 `http://localhost:3000/api/docs`에서 확인할 수 있습니
 
 민감한 값은 `.env`에 정의하며 예시는 `.env.example`을 참고하세요. Supabase 프로젝트 설정 및 JWT 키 등이 필요합니다.
 
+- `OPENAI_API_KEY`: JLPT 예문 생성을 위한 OpenAI 인증 키
+- `TMAP_APP_KEY`: SK TMAP 지오코딩 API 호출용 앱 키
+
 ## 디렉터리 구조
 
 ```
@@ -40,6 +43,7 @@ supabase-api/
 │  ├─ auth/                 # 인증 모듈 (Controller, Service, DTO, Guard)
 │  ├─ common/               # 재사용 가능한 데코레이터 및 유틸
 │  ├─ health/               # 헬스 체크 엔드포인트
+│  ├─ geo/                  # 외부 지오코딩(TMAP) 엔드포인트
 │  ├─ jlpt-voca/            # JLPT 어휘 기능 모듈
 │  ├─ profiles/             # 사용자 프로필 관리
 │  ├─ supabase/             # Supabase 클라이언트 구성

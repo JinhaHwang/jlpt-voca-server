@@ -1,0 +1,3 @@
+### Lookup Coordinates By Address
+GET {{baseUrl}}/{{apiPrefix}}/geo/coordinates?address=동천역
+Accept: application/json
