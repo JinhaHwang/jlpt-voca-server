@@ -10,11 +10,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "startX": "127.02479803562213",
-  "startY": "37.504585233865086",
-  "endX": "127.03747630119366",
-  "endY": "37.479103923078995",
-  "count": 2,
+  "startX": "127.101132",
+  "startY": "37.516538",
+  "endX": "127.098593",
+  "endY": "37.346791",
+  "count": 10,
   "lang": 0,
   "format": "json"
 }
