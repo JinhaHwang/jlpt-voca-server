@@ -61,6 +61,11 @@ supabase-api/
 └─ README.md
 ```
 
+## 주요 API (일부)
+
+- `GET /geo/coordinates` : 도로명/지번 주소를 좌표로 변환
+- `POST /geo/transit/routes` : 출발지-도착지 좌표 기준 대중교통 경로 탐색
+
 ## Swagger 구성
 
 `src/app.factory.ts`에서 Swagger 설정을 관리합니다. 빌드 시 `swagger.json`이 갱신되어 배포 아티팩트에 포함됩니다.

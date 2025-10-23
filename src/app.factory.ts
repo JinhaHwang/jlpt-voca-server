@@ -78,6 +78,7 @@ function setupSwagger(app: NestExpressApplication) {
     .addTag('Auth', '인증 관련 API (회원가입, 로그인, 로그아웃)')
     .addTag('Profiles', '사용자 프로필 관리 API')
     .addTag('JLPT Vocabulary', 'JLPT 단어 조회 및 검색 API')
+    .addTag('Geo', '지오코딩 및 대중교통 경로 API')
     .addTag('Health', '서버 상태 확인 API')
     .build();
 

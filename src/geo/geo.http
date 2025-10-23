@@ -1,3 +1,20 @@
 ### Lookup Coordinates By Address
 GET {{baseUrl}}/{{apiPrefix}}/geo/coordinates?address=동천역
 Accept: application/json
+
+###
+
+### Transit Routes Search
+POST {{baseUrl}}/{{apiPrefix}}/geo/transit/routes
+Accept: application/json
+Content-Type: application/json
+
+{
+  "startX": "127.02479803562213",
+  "startY": "37.504585233865086",
+  "endX": "127.03747630119366",
+  "endY": "37.479103923078995",
+  "count": 2,
+  "lang": 0,
+  "format": "json"
+}
