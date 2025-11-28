@@ -60,6 +60,30 @@ export async function createApp(viewsDir?: string) {
     }),
   );
 
+  const corsAllowedOrigins =
+    process.env.CORS_ALLOWED_ORIGINS?.split(',').map((origin) =>
+      origin.trim(),
+    ) || [
+      'https://dadokdadok.vercel.app',
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ];
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      // Allow server-to-server or same-origin calls without an Origin header
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (corsAllowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+  });
+
   // Swagger 설정
   setupSwagger(app);
 
