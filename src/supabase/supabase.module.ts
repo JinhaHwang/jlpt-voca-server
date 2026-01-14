@@ -14,12 +14,12 @@ import { SupabaseService } from './supabase.service';
       useFactory: (configService: ConfigService) => {
         const url = configService.get<string>('SUPABASE_URL');
         const serviceRoleSecret = configService.get<string>(
-          'SUPABASE_SERVICE_ROLE_SECRET',
+          'SUPABASE_SERVICE_ROLE_KEY',
         );
 
         if (!url || !serviceRoleSecret) {
           throw new Error(
-            'Missing Supabase configuration. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_SECRET.',
+            'Missing Supabase configuration. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.',
           );
         }
 

@@ -309,7 +309,7 @@ describe('JLPT Vocabulary (e2e)', () => {
 
   beforeAll(async () => {
     process.env.SUPABASE_URL ??= 'http://localhost:54321';
-    process.env.SUPABASE_SERVICE_ROLE_SECRET ??= 'dummy-service-role-secret';
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'dummy-service-role-secret';
     agentsServiceMock = {
       generateExampleSentence: jest
         .fn()
@@ -616,8 +616,7 @@ describe('JLPT Vocabulary (e2e)', () => {
         word: '猫',
         sentence: agentExampleResponse.sentence,
         korean_meaning: agentExampleResponse.solution.korean_meaning,
-        furigana_positions:
-          agentExampleResponse.solution.furigana_positions,
+        furigana_positions: agentExampleResponse.solution.furigana_positions,
       });
       expect(agentsServiceMock.generateExampleSentence).toHaveBeenCalledWith(
         '猫',
