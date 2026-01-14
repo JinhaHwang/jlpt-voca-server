@@ -12,14 +12,14 @@ import { SupabaseService } from './supabase.service';
       provide: SUPABASE_CLIENT,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const url = configService.get<string>('jlptvoca_SUPABASE_URL');
+        const url = configService.get<string>('SUPABASE_URL');
         const serviceRoleSecret = configService.get<string>(
-          'jlptvoca_SUPABASE_SERVICE_ROLE_KEY',
+          'SUPABASE_SERVICE_ROLE_SECRET',
         );
 
         if (!url || !serviceRoleSecret) {
           throw new Error(
-            'Missing Supabase configuration. Check jlptvoca_SUPABASE_URL and jlptvoca_SUPABASE_SERVICE_ROLE_KEY.',
+            'Missing Supabase configuration. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_SECRET.',
           );
         }
 
