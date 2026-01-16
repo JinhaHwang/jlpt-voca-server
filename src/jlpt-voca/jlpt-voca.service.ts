@@ -185,11 +185,16 @@ export class JlptVocaService {
     query: GetRandomVocaByIdsQueryDto,
   ): Promise<JlptVocaRecord[]> {
     const client = this.supabaseService.getClient();
+    const ids = query.ids ?? [];
+
+    if (ids.length === 0) {
+      return [];
+    }
 
     const { data, error } = await client
       .from('DD_JLPT_VOCA')
       .select('*')
-      .in('id', query.ids);
+      .in('id', ids);
 
     if (error) {
       throw new InternalServerErrorException(error.message);

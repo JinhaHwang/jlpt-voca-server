@@ -1,12 +1,13 @@
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayNotEmpty, IsArray, IsNumber } from 'class-validator';
+import { IsArray, IsNumber, IsOptional } from 'class-validator';
 
 export class GetRandomVocaByIdsQueryDto {
   @ApiProperty({
     description: '조회할 단어 ID 배열',
     type: [Number],
     example: [1, 2, 3],
+    required: false,
   })
   @Transform(({ value }) => {
     if (value === undefined || value === null) {
@@ -34,8 +35,8 @@ export class GetRandomVocaByIdsQueryDto {
       .map((item) => Number(item))
       .filter((item) => Number.isFinite(item));
   })
+  @IsOptional()
   @IsArray()
-  @ArrayNotEmpty()
   @IsNumber({}, { each: true })
-  ids!: number[];
+  ids?: number[];
 }
