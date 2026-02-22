@@ -237,11 +237,20 @@ export class JlptVocaService {
         sanitizedWord,
       );
 
+    const sentence = result.sentence;
+    const furigana_positions = result.solution.furigana_positions.map(
+      (p) => ({
+        ...p,
+        kanji:
+          p.kanji ?? sentence.slice(p.start, p.end + 1),
+      }),
+    );
+
     return {
       word: sanitizedWord,
-      sentence: result.sentence,
+      sentence,
       korean_meaning: result.solution.korean_meaning,
-      furigana_positions: result.solution.furigana_positions,
+      furigana_positions,
     };
   }
 }

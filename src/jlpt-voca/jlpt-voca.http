@@ -111,8 +111,8 @@ Content-Type: application/json
 #   "sentence": "彼女は学校で新しい友達を作った。",
 #   "korean_meaning": "그녀는 학교에서 새로운 친구를 사귀었다.",
 #   "furigana_positions": [
-#     { "start": 3, "end": 3, "text": "がっ" },
-#     { "start": 4, "end": 4, "text": "こう" }
+#     { "start": 3, "end": 3, "text": "がっ", "kanji": "学" },
+#     { "start": 4, "end": 4, "text": "こう", "kanji": "校" }
 #   ]
 # }
 

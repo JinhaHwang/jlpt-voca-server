@@ -10,6 +10,7 @@ const FuriganaPositionSchema = z
     start: z.number().int().nonnegative(),
     end: z.number().int().nonnegative(),
     text: z.string(),
+    kanji: z.string().optional(),
   })
   .refine((value) => value.end >= value.start, {
     message: 'furigana_positions entries must have end >= start.',
@@ -206,10 +207,11 @@ const japaneseSentenceToSolutionJson = new Agent({
 - 입력 예문 전체의 자연스러운 한글 번역(의역)
 - 입력받은 원본 일본어 예문
 - 예문 내 등장하는 *모든 한자 또는 연속된 한자 단위별*로,  
-  - "start": 구간의 첫 한자 인덱스(0부터 시작),  
-  - "end": 구간의 마지막 한자 인덱스(포함하는 마지막 인덱스, 0부터 시작하는 포함 범위),  
-  - "text": 해당 구간의 한자 전체에 대응하는 올바른 후리가나(히라가나 또는 가타카나)  
-  위 세 가지 정보를 가진 객체를 \`furigana_positions\` 배열의 각 원소로 리스트화하여 기록하세요.
+  - "start": 구간의 첫 한자 인덱스(0부터 시작, 반드시 정확히),  
+  - "end": 구간의 마지막 한자 인덱스(포함, 0부터 시작, 반드시 정확히),  
+  - "text": 해당 구간의 한자 전체에 대응하는 올바른 후리가나(히라가나 또는 가타카나),  
+  - "kanji": 해당 구간의 한자(예: 단일 한자 "考", 연속 한자 "彼女")  
+  위 네 가지 정보를 가진 객체를 \`furigana_positions\` 배열의 각 원소로 리스트화하여 기록하세요.
 - 예문에 포함된 모든 한자(또는 한자 연속 구간)가 반드시 누락 없이 이 리스트에 반영되어야 합니다.  
   누락이 없도록 한 번 더 점검하세요.
 
@@ -220,7 +222,9 @@ const japaneseSentenceToSolutionJson = new Agent({
 3. 전체 문자를 순회하며, 한자(漢字)가 등장하는 모든 구간의 시작/끝 인덱스를 정확히 기록하세요.  
    - 연속된 한자들이 하나의 구간이 되도록 묶으세요. 예) 漢字語 → (start:2, end:4, text:…)
 4. 각 한자 혹은 연속 한자 구간마다, 대응되는 올바른 후리가나(히라가나·가타카나·혼용 등 자연스러운 표기)를 추출하세요.
-5. 위에서 조사한 각 구간 정보를 {start, end, text} 형태로 \`furigana_positions\` 리스트에 누락 없이 저장하세요.  
+5. 위에서 조사한 각 구간 정보를 {start, end, text, kanji} 형태로 \`furigana_positions\` 리스트에 누락 없이 저장하세요.  
+   - start, end는 예문 문자열에서 해당 한자 구간의 정확한 문자 인덱스(0부터)입니다. 각 문자를 0,1,2,...로 세어 검증하세요.  
+   - kanji는 해당 구간의 한자 문자 그 자체입니다(예: 考, 彼女).  
    - 반드시 예문 내 모든 한자(또는 연속 구간)가 담겨 있는지 재확인하세요.
 6. 논리적으로 모든 과정을 검증·체크한 뒤, 마지막에만 지정된 JSON 포맷으로 결과를 한 번만 출력하세요.
 
@@ -231,11 +235,12 @@ const japaneseSentenceToSolutionJson = new Agent({
 - korean_meaning: [예문의 자연스러운 한글 번역]
 - original_sentence: [입력받은 일본어 예문]
 - furigana_positions: [
-    { "start": [연속 한자 시작 인덱스], "end": [동일 구간 마지막 인덱스], "text": [올바른 후리가나] },
+    { "start": [시작 인덱스], "end": [끝 인덱스], "text": [후리가나], "kanji": [한자] },
     ...  
   ]
 
-    * furigana_positions는 예문 내 *모든 한자 또는 한자 연속 구간*에 대해, start–end 인덱스와 후리가나를 모두 누락 없이 포함시킵니다.
+    * furigana_positions는 예문 내 *모든 한자 또는 한자 연속 구간*에 대해, start, end, text, kanji를 누락 없이 포함시킵니다.
+    * start와 end는 예문 문자열의 문자별 인덱스(0부터)이며, 해당 구간의 한자와 반드시 일치해야 합니다.
     * 한자가 완전히 없는 경우에만 빈 배열([])을 반환합니다.
 
 JSON만 결과로 출력하며, 해설·분석·중간 결과 등은 절대 출력하지 마세요. JSON 형식은 공백·줄바꿈 등에 구애받지 않습니다.
@@ -243,6 +248,7 @@ JSON만 결과로 출력하며, 해설·분석·중간 결과 등은 절대 출�
 # Notes
 
 - 한자가 아닌 글자(히라가나, 가타카나, 알파벳, 숫자 등)는 furigana_positions에 포함하지 않습니다.
+- 각 항목의 kanji는 해당 구간의 한자 문자 그대로 출력하고, start·end는 예문에서 해당 한자의 정확한 문자 인덱스와 일치해야 합니다.
 - 번역은 한국어 어순·뉘앙스에 맞는 자연스러운 한글 의역이어야 합니다.
 - 후리가나는 자연스러운 일본어 표기(히라가나·가타카나·혼용 등)를 따르세요.
 - 각 구간(단일 한자·연속 한자 묶음)에 대해 누락 없이 furigana_positions 배열에 담겼는지 반드시 재확인하세요.
