@@ -65,6 +65,7 @@ export async function createApp(viewsDir?: string) {
       origin.trim(),
     ) || [
       'https://dadokdadok.vercel.app',
+      'https://jlpt-voca-server.vercel.app',
       'http://localhost:3000',
       'http://localhost:3001',
     ];
