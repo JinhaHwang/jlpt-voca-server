@@ -254,7 +254,7 @@ JSON만 결과로 출력하며, 해설·분석·중간 결과 등은 절대 출�
 - 각 구간(단일 한자·연속 한자 묶음)에 대해 누락 없이 furigana_positions 배열에 담겼는지 반드시 재확인하세요.
 - 예문 내 한자가 전혀 없다면 furigana_positions는 빈 배열([])로 출력하십시오.
 `,
-  model: 'gpt-5-nano',
+  model: 'gpt-4.1-mini',
   modelSettings: {
     temperature: 1,
     topP: 1,
