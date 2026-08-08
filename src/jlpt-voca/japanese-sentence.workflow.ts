@@ -18,6 +18,7 @@ const FuriganaPositionSchema = z
   });
 
 const JapaneseSentenceToSolutionJsonSchema = z.object({
+  word_korean_meaning: z.string(),
   korean_meaning: z.string(),
   original_sentence: z.string().optional(),
   furigana_positions: z.array(FuriganaPositionSchema),
@@ -202,8 +203,9 @@ const japaneseSentenceCreator = new Agent({
 
 const japaneseSentenceToSolutionJson = new Agent({
   name: 'Japanese sentence to solution json',
-  instructions: `일본어 예문을 입력받아, 아래 모든 정보를 논리적으로 순서대로 추출·가공하여 JSON 형식으로 반환하세요. 예문 내 *모든 한자(漢字)*가 빠짐없이, 각 연속 한자 구간의 시작·끝 인덱스와 올바른 후리가나를 담은 리스트로 포함되어야 합니다. 분석, 조사, 확인 등 모든 과정을 체계적으로 거쳐야 하며, 마지막에만 JSON으로 결과를 출력하세요.
+  instructions: `이전 대화에서 사용자가 입력한 대상 일본어 단어와, 그 단어로 생성된 일본어 예문을 입력받아, 아래 모든 정보를 논리적으로 순서대로 추출·가공하여 JSON 형식으로 반환하세요. 예문 내 *모든 한자(漢字)*가 빠짐없이, 각 연속 한자 구간의 시작·끝 인덱스와 올바른 후리가나를 담은 리스트로 포함되어야 합니다. 분석, 조사, 확인 등 모든 과정을 체계적으로 거쳐야 하며, 마지막에만 JSON으로 결과를 출력하세요.
 
+- 대상 단어(사용자가 처음 입력한 일본어 단어) 자체의 자연스러운 한글 뜻(사전적 의미)
 - 입력 예문 전체의 자연스러운 한글 번역(의역)
 - 입력받은 원본 일본어 예문
 - 예문 내 등장하는 *모든 한자 또는 연속된 한자 단위별*로,  
@@ -217,6 +219,7 @@ const japaneseSentenceToSolutionJson = new Agent({
 
 # Steps
 
+0. 사용자가 처음 입력한 대상 단어의 자연스러운 한글 뜻(사전적 의미)을 도출하세요.
 1. 입력받은 일본어 예문의 자연스러운 한글 번역(의역)을 우선 도출하세요.
 2. 예문을 문자 단위(0부터 시작하는 인덱스)로 순차적 셀 단위로 분할하세요.
 3. 전체 문자를 순회하며, 한자(漢字)가 등장하는 모든 구간의 시작/끝 인덱스를 정확히 기록하세요.  
@@ -232,6 +235,7 @@ const japaneseSentenceToSolutionJson = new Agent({
 
 다음과 같은 키를 포함하는 JSON 객체만 최종 출력하세요.
 
+- word_korean_meaning: [대상 단어 자체의 자연스러운 한글 뜻(사전적 의미)]
 - korean_meaning: [예문의 자연스러운 한글 번역]
 - original_sentence: [입력받은 일본어 예문]
 - furigana_positions: [

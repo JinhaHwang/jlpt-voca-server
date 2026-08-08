@@ -108,6 +108,7 @@ Content-Type: application/json
 # 예상 응답 예시
 # {
 #   "word": "学校",
+#   "word_korean_meaning": "학교",
 #   "sentence": "彼女は学校で新しい友達を作った。",
 #   "korean_meaning": "그녀는 학교에서 새로운 친구를 사귀었다.",
 #   "furigana_positions": [

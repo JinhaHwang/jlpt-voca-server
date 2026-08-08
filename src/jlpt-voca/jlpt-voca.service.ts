@@ -248,6 +248,7 @@ export class JlptVocaService {
 
     return {
       word: sanitizedWord,
+      word_korean_meaning: result.solution.word_korean_meaning,
       sentence,
       korean_meaning: result.solution.korean_meaning,
       furigana_positions,

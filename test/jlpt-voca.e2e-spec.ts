@@ -295,6 +295,7 @@ describe('JLPT Vocabulary (e2e)', () => {
   const agentExampleResponse = {
     sentence: '猫が窓辺で日向ぼっこをしている。',
     solution: {
+      word_korean_meaning: '고양이',
       korean_meaning: '고양이가 창가에서 햇볕을 쬐고 있어요.',
       original_sentence: '猫が窓辺で日向ぼっこをしている。',
       furigana_positions: [
@@ -304,7 +305,7 @@ describe('JLPT Vocabulary (e2e)', () => {
       ],
     },
     rawSolutionJson:
-      '{"korean_meaning":"고양이가 창가에서 햇볕을 쬐고 있어요.","original_sentence":"猫が窓辺で日向ぼっこをしている。","furigana_positions":[{"start":0,"end":0,"text":"ねこ","kanji":"猫"},{"start":2,"end":3,"text":"まどべ","kanji":"窓辺"},{"start":5,"end":6,"text":"ひなた","kanji":"日向"}]}',
+      '{"word_korean_meaning":"고양이","korean_meaning":"고양이가 창가에서 햇볕을 쬐고 있어요.","original_sentence":"猫が窓辺で日向ぼっこをしている。","furigana_positions":[{"start":0,"end":0,"text":"ねこ","kanji":"猫"},{"start":2,"end":3,"text":"まどべ","kanji":"窓辺"},{"start":5,"end":6,"text":"ひなた","kanji":"日向"}]}',
   };
 
   beforeAll(async () => {
@@ -615,6 +616,7 @@ describe('JLPT Vocabulary (e2e)', () => {
 
       expect(response.body).toEqual({
         word: '猫',
+        word_korean_meaning: agentExampleResponse.solution.word_korean_meaning,
         sentence: agentExampleResponse.sentence,
         korean_meaning: agentExampleResponse.solution.korean_meaning,
         furigana_positions: [
