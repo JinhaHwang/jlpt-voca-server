@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { AiController } from './ai/ai.controller';
 import { GeoModule } from './geo/geo.module';
+import { StudyInsightsModule } from './study-insights/study-insights.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GeoModule } from './geo/geo.module';
     HealthModule,
     JlptVocaModule,
     GeoModule,
+    StudyInsightsModule,
   ],
   controllers: [AppController, AiController],
 })
