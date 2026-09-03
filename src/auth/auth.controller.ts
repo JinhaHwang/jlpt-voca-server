@@ -7,11 +7,23 @@ import {
   Res,
   Req,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import {
+  CurrentUserResponseDto,
+  LogoutResponseDto,
+  SignInResponseDto,
+  SignUpResponseDto,
+} from './dto/auth-response.dto';
 import { SupabaseAuthGuard } from './supabase-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import type { User } from '@supabase/supabase-js';
@@ -26,6 +38,7 @@ export class AuthController {
     summary: '회원가입',
     description: '이메일과 비밀번호로 회원가입',
   })
+  @ApiCreatedResponse({ type: SignUpResponseDto })
   async signUp(@Body() signUpDto: SignUpDto) {
     return this.authService.signUp(signUpDto);
   }
@@ -35,6 +48,7 @@ export class AuthController {
     summary: '로그인',
     description: '이메일과 비밀번호로 로그인',
   })
+  @ApiCreatedResponse({ type: SignInResponseDto })
   async signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
@@ -44,6 +58,7 @@ export class AuthController {
     summary: '현재 사용자 정보 조회',
     description: '인증된 사용자의 정보를 조회',
   })
+  @ApiOkResponse({ type: CurrentUserResponseDto })
   @ApiBearerAuth()
   @UseGuards(SupabaseAuthGuard)
   getMe(@CurrentUser() user: User) {
@@ -55,6 +70,7 @@ export class AuthController {
 
   @Post('logout')
   @ApiOperation({ summary: '로그아웃', description: '현재 세션 로그아웃' })
+  @ApiCreatedResponse({ type: LogoutResponseDto })
   @ApiBearerAuth()
   @UseGuards(SupabaseAuthGuard)
   async logout(@Req() req: Request, @Res() res: Response) {

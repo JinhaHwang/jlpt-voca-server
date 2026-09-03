@@ -6,26 +6,28 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { AiLocationDto } from './dto/ai-location.dto';
+import { AiStatusResponseDto } from './dto/ai-status-response.dto';
 
-type AiLocationPayload = {
-  lat?: number;
-  lng?: number;
-};
-
+@ApiTags('AI')
 @Controller('ai')
 export class AiController {
   private readonly logger = new Logger(AiController.name);
 
   @Post('my-bus')
+  @ApiCreatedResponse({ type: AiStatusResponseDto })
   async logMyBusLocation(
-    @Body() payload: AiLocationPayload,
+    @Body() payload: AiLocationDto,
     @Query('lat') latQuery?: string,
     @Query('lng') lngQuery?: string,
-  ) {
+  ): Promise<AiStatusResponseDto> {
     const lat =
-      payload?.lat ?? (typeof latQuery === 'string' ? Number(latQuery) : undefined);
+      payload?.lat ??
+      (typeof latQuery === 'string' ? Number(latQuery) : undefined);
     const lng =
-      payload?.lng ?? (typeof lngQuery === 'string' ? Number(lngQuery) : undefined);
+      payload?.lng ??
+      (typeof lngQuery === 'string' ? Number(lngQuery) : undefined);
 
     if (typeof lat !== 'number' || Number.isNaN(lat)) {
       throw new BadRequestException('lat is required and must be a number');
