@@ -29,7 +29,7 @@ export async function createApp(viewsDir?: string) {
       res.on('finish', () => {
         const duration = Date.now() - startedAt;
         requestLogger.log(
-          `${req.method} ${req.originalUrl} ${res.statusCode} ${duration}ms`,
+          `${req.method} ${req.path.startsWith('/api/auth/') ? req.path : req.originalUrl} ${res.statusCode} ${duration}ms`,
         );
       });
 
